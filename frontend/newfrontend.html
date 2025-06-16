@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metatraon - AI Workstation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Left Navigation Menu -->
+    <div class="left-nav">
+      <div class="left-nav-tabs">
+        <button class="tab-btn active" data-tab="history"><span>History</span></button>
+        <button class="tab-btn" data-tab="witz"><span>Witz</span></button>
+      </div>
+      
+      <!-- History Tab Content -->
+      <div class="tab-content active" id="history-content">
+        <!-- Chat History Section -->
+        <div class="history-section">
+          <div class="section-header">
+            <h4><i class="fas fa-history"></i> Chat History</h4>
+          </div>
+          <div class="chat-history-list">
+            <div class="history-item">
+              <div class="history-item-content">
+                <div class="history-title">Recent Chat</div>
+                <div class="history-preview">How can I help you today?</div>
+                <div class="history-time">2 minutes ago</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Saved Chats Section -->
+        <div class="history-section">
+          <div class="section-header">
+            <h4><i class="fas fa-star"></i> Saved Chats</h4>
+          </div>
+          <div class="saved-chats-list">
+            <div class="empty-state">
+              <i class="fas fa-bookmark"></i>
+              <p>No saved chats yet</p>
+              <small>Star a chat to save it here</small>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Witz Tab Content -->
+      <div class="tab-content" id="witz-content">
+        <div class="witz-header">
+          <h4><i class="fas fa-brain"></i> AI Assistants</h4>
+          <button class="create-witz-btn">
+            <i class="fas fa-plus"></i> Create Witz
+          </button>
+        </div>
+
+        <div class="witz-list">
+          <div class="witz-item">
+            <div class="witz-avatar">
+              <i class="fas fa-code"></i>
+            </div>
+            <div class="witz-info">
+              <div class="witz-name">CodeMaster</div>
+              <div class="witz-specialty">Python Developer</div>
+            </div>
+            <div class="witz-status active">
+              <i class="fas fa-circle"></i>
+            </div>
+          </div>
+
+          <div class="witz-item">
+            <div class="witz-avatar">
+              <i class="fas fa-pen"></i>
+            </div>
+            <div class="witz-info">
+              <div class="witz-name">WriteWell</div>
+              <div class="witz-specialty">Content Writer</div>
+            </div>
+            <div class="witz-status inactive">
+              <i class="fas fa-circle"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+      <div class="main-card">
+        <div class="card-gradient-border"></div>
+
+        <div class="card-body">
+          <!-- Messages Area - Conversation -->
+          <div class="chat-container">
+            <div class="messages">
+              <div class="message user">
+                <div class="message-content">Hello! How can you help me today?</div>
+              </div>
+              <div class="message assistant">
+                <div class="message-content">I'm here to help you with a wide variety of tasks! I can assist with coding, writing, analysis, creative projects, and much more. What would you like to work on?</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Text Chat Input -->
+          <div class="text-input-container">
+            <textarea class="text-input" placeholder="Enter your prompt" rows="3"></textarea>
+            <div class="action-buttons">
+              <button class="btn btn-icon save-chat-btn" title="Save this chat">
+                <i class="fas fa-star"></i>
+              </button>
+              <button class="btn btn-icon file-attachment-btn" title="Attach files">
+                <i class="fas fa-paperclip"></i>
+              </button>
+              <button class="btn btn-icon settings-btn" title="Settings">
+                <i class="fas fa-cog"></i>
+              </button>
+              <button class="btn btn-icon">
+                <i class="fas fa-microphone"></i>
+              </button>
+              <button class="btn btn-icon">
+                <i class="fas fa-camera"></i>
+              </button>
+              <button class="btn btn-icon">
+                <i class="fas fa-desktop"></i>
+              </button>
+              <button class="btn btn-send">
+                <i class="fas fa-paper-plane"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Navigation Menu -->
+    <div class="right-nav">
+      <div class="right-nav-tabs">
+        <button class="tab-btn active" data-tab="tools"><span>Tools</span></button>
+        <button class="tab-btn" data-tab="connections"><span>Connections</span></button>
+      </div>
+
+      <!-- Tools Tab Content -->
+      <div class="tab-content active" id="tools-content">
+        <div class="nav-buttons">
+          <a href="#" class="nav-button">
+            <i class="fas fa-robot"></i>
+            <span>Agent/Flow Builder</span>
+          </a>
+          <a href="#" class="nav-button">
+            <i class="fas fa-palette"></i>
+            <span>Creative Studio</span>
+          </a>
+          <a href="#" class="nav-button">
+            <i class="fas fa-share-alt"></i>
+            <span>Social Station</span>
+          </a>
+          <a href="#" class="nav-button">
+            <i class="fas fa-window-maximize"></i>
+            <span>App/Web Builder</span>
+          </a>
+          <a href="#" class="nav-button">
+            <i class="fas fa-layer-group"></i>
+            <span>Model Training</span>
+          </a>
+          <a href="#" class="nav-button">
+            <i class="fas fa-video"></i>
+            <span>Video Meeting</span>
+          </a>
+
+          <!-- Add Feature Buttons -->
+          <a href="#" class="nav-button add-feature-btn">
+            <i class="fas fa-plus-circle"></i>
+            <span>+ Add Feature</span>
+          </a>
+          <a href="#" class="nav-button add-feature-btn">
+            <i class="fas fa-plus-circle"></i>
+            <span>+ Add Feature</span>
+          </a>
+          <a href="#" class="nav-button add-feature-btn">
+            <i class="fas fa-plus-circle"></i>
+            <span>+ Add Feature</span>
+          </a>
+        </div>
+
+        <!-- Tools Footer - Token Counter Only -->
+        <div class="tools-footer">
+          <!-- Token Counter -->
+          <div class="token-counter">
+            <span class="token-label">Token count</span>
+            <span class="token-value">599 / 1,048,576</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Connections Tab Content -->
+      <div class="tab-content" id="connections-content">
+        <div class="connections-header">
+          <h3>Integrations</h3>
+          <button class="add-connection-btn">
+            <i class="fas fa-plus"></i> Add Connection
+          </button>
+        </div>
+
+        <!-- Integration Categories -->
+        <div class="integration-categories">
+          <div class="category-section">
+            <h4><i class="fas fa-share-alt"></i> Social Media</h4>
+            <div class="connection-buttons">
+              <button class="connection-button">
+                <i class="fab fa-twitter"></i>
+                <span>Twitter</span>
+              </button>
+              <button class="connection-button">
+                <i class="fab fa-facebook"></i>
+                <span>Facebook</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="category-section">
+            <h4><i class="fas fa-code"></i> Development</h4>
+            <div class="connection-buttons">
+              <button class="connection-button">
+                <i class="fab fa-github"></i>
+                <span>GitHub</span>
+              </button>
+              <button class="connection-button">
+                <i class="fas fa-database"></i>
+                <span>Database</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Creative Studio Modal -->
+  <div class="creative-studio-modal" id="creativeStudioModal">
+    <div class="creative-studio-container">
+      <!-- Header -->
+      <div class="creative-studio-header">
+        <div class="studio-title">
+          <i class="fas fa-palette"></i>
+          Creative Studio
+        </div>
+
+        <!-- Mode Navigation Tabs -->
+        <div class="mode-navigation">
+          <button id="editorModeBtn" class="mode-tab active">
+            <i class="fas fa-edit"></i> Editor
+          </button>
+          <button id="imageGenModeBtn" class="mode-tab">
+            <i class="fas fa-image"></i> Image Generator
+          </button>
+          <button id="videoGenModeBtn" class="mode-tab">
+            <i class="fas fa-video"></i> Video Generator
+          </button>
+        </div>
+
+        <!-- Studio Controls -->
+        <div class="studio-controls">
+          <button class="studio-control-btn" id="newProjectBtn">
+            <i class="fas fa-plus"></i> New Project
+          </button>
+          <button class="studio-control-btn" id="aiEnhanceBtn">
+            <i class="fas fa-magic"></i> AI Enhance
+          </button>
+          <button class="studio-control-btn" id="exportProjectBtn">
+            <i class="fas fa-download"></i> Export
+          </button>
+          <button class="close-studio-btn" id="closeStudioBtn">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Body -->
+      <div class="creative-studio-body">
+        <div class="studio-main-content">
+          <!-- Editor Mode -->
+          <div id="editorMode" class="content-mode active">
+            <div class="editor-container">
+              <div class="editor-loading">
+                <i class="fas fa-video"></i>
+                <h3>Loading Motionity Editor...</h3>
+                <p>Initializing video editing workspace</p>
+              </div>
+
+              <!-- Motionity Editor Container -->
+              <iframe
+                id="motionityEditor"
+                class="motionity-editor"
+                style="display: none;"
+                allow="camera; microphone; fullscreen; clipboard-read; clipboard-write"
+                sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-downloads"
+                loading="lazy">
+              </iframe>
+            </div>
+          </div>
+
+          <!-- Image Generator Mode -->
+          <div id="imageGenMode" class="content-mode">
+            <div class="generator-interface">
+              <div class="generator-main">
+                <!-- Mode Selection Tabs -->
+                <div class="generator-mode-tabs">
+                  <button class="mode-selector active" data-mode="text2img">
+                    <i class="fas fa-font"></i> Text to Image
+                  </button>
+                  <button class="mode-selector" data-mode="img2img">
+                    <i class="fas fa-image"></i> Image to Image
+                  </button>
+                  <button class="mode-selector" data-mode="controlnet">
+                    <i class="fas fa-project-diagram"></i> ControlNet
+                  </button>
+                  <button class="mode-selector" data-mode="enhance">
+                    <i class="fas fa-magic"></i> Enhance
+                  </button>
+                  <button class="mode-selector" data-mode="tools">
+                    <i class="fas fa-tools"></i> Tools
+                  </button>
+                </div>
+
+                <div class="generation-area">
+                  <div id="imagePreview" class="preview-area">
+                    <div class="preview-placeholder">
+                      <i class="fas fa-image"></i>
+                      <h3>AI Image Generator</h3>
+                      <p>Choose a mode above to get started</p>
+                    </div>
+                  </div>
+
+                  <div class="generation-controls">
+                    <!-- Text to Image Mode -->
+                    <div class="mode-controls active" data-mode="text2img">
+                      <div class="prompt-input-area">
+                        <textarea id="imagePrompt" placeholder="Describe the image you want to create..." rows="3"></textarea>
+                        <button id="generateImageBtn" class="generate-btn">
+                          <i class="fas fa-magic"></i> Generate
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Image to Image Mode -->
+                    <div class="mode-controls" data-mode="img2img" style="display: none;">
+                      <div class="upload-area">
+                        <input type="file" id="img2imgInput" accept="image/*" style="display: none;">
+                        <button class="upload-btn" onclick="document.getElementById('img2imgInput').click()">
+                          <i class="fas fa-upload"></i> Upload Image
+                        </button>
+                        <div id="uploadedImagePreview" class="uploaded-preview" style="display: none;"></div>
+                      </div>
+                      <div class="prompt-input-area">
+                        <textarea id="img2imgPrompt" placeholder="Describe how to transform the image..." rows="3"></textarea>
+                        <button id="transformImageBtn" class="generate-btn">
+                          <i class="fas fa-sync-alt"></i> Transform
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- ControlNet Mode -->
+                    <div class="mode-controls" data-mode="controlnet" style="display: none;">
+                      <div class="controlnet-options">
+                        <select id="controlnetType">
+                          <option value="canny">Canny Edge Detection</option>
+                          <option value="depth">Depth Map</option>
+                          <option value="openpose">OpenPose</option>
+                          <option value="scribble">Scribble</option>
+                          <option value="softedge">Soft Edge</option>
+                        </select>
+                      </div>
+                      <div class="upload-area">
+                        <input type="file" id="controlnetInput" accept="image/*" style="display: none;">
+                        <button class="upload-btn" onclick="document.getElementById('controlnetInput').click()">
+                          <i class="fas fa-upload"></i> Upload Control Image
+                        </button>
+                      </div>
+                      <div class="prompt-input-area">
+                        <textarea id="controlnetPrompt" placeholder="Describe the output image..." rows="3"></textarea>
+                        <button id="controlnetBtn" class="generate-btn">
+                          <i class="fas fa-project-diagram"></i> Generate
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Enhancement Mode -->
+                    <div class="mode-controls" data-mode="enhance" style="display: none;">
+                      <div class="enhance-options">
+                        <div class="enhance-grid">
+                          <button class="enhance-option" data-enhance="upscale">
+                            <i class="fas fa-expand-arrows-alt"></i>
+                            <span>Upscale (ESRGAN)</span>
+                          </button>
+                          <button class="enhance-option" data-enhance="face-restore">
+                            <i class="fas fa-user-circle"></i>
+                            <span>Face Restoration</span>
+                          </button>
+                          <button class="enhance-option" data-enhance="background-remove">
+                            <i class="fas fa-eraser"></i>
+                            <span>Remove Background</span>
+                          </button>
+                          <button class="enhance-option" data-enhance="outpaint">
+                            <i class="fas fa-expand"></i>
+                            <span>Outpainting</span>
+                          </button>
+                        </div>
+                      </div>
+                      <div class="upload-area">
+                        <input type="file" id="enhanceInput" accept="image/*" style="display: none;">
+                        <button class="upload-btn" onclick="document.getElementById('enhanceInput').click()">
+                          <i class="fas fa-upload"></i> Upload Image to Enhance
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Tools Mode -->
+                    <div class="mode-controls" data-mode="tools" style="display: none;">
+                      <div class="tools-grid">
+                        <div class="tool-card" data-tool="qr">
+                          <i class="fas fa-qrcode"></i>
+                          <h4>QR Code Generator</h4>
+                          <p>Create artistic QR codes</p>
+                        </div>
+                        <div class="tool-card" data-tool="faceswap">
+                          <i class="fas fa-exchange-alt"></i>
+                          <h4>Face Swap</h4>
+                          <p>Swap faces between images</p>
+                        </div>
+                        <div class="tool-card" data-tool="segment">
+                          <i class="fas fa-cut"></i>
+                          <h4>Segment Anything</h4>
+                          <p>Advanced image segmentation</p>
+                        </div>
+                        <div class="tool-card" data-tool="word2img">
+                          <i class="fas fa-font"></i>
+                          <h4>Word to Image</h4>
+                          <p>Typography-based images</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="generation-progress" id="imageProgress" style="display: none;">
+                      <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                      </div>
+                      <p>Processing...</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Video Generator Mode -->
+          <div id="videoGenMode" class="content-mode">
+            <div class="generator-interface">
+              <div class="generator-main">
+                <div class="generation-area">
+                  <div id="videoPreview" class="preview-area">
+                    <div class="preview-placeholder">
+                      <i class="fas fa-video"></i>
+                      <h3>AI Video Generator</h3>
+                      <p>Create dynamic videos from text descriptions</p>
+                    </div>
+                  </div>
+
+                  <div class="generation-controls">
+                    <div class="prompt-input-area">
+                      <textarea id="videoPrompt" placeholder="Describe the video you want to create..." rows="3"></textarea>
+                      <button id="generateVideoBtn" class="generate-btn">
+                        <i class="fas fa-magic"></i> Generate Video
+                      </button>
+                    </div>
+
+                    <div class="generation-progress" id="videoProgress" style="display: none;">
+                      <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                      </div>
+                      <p>Generating your video...</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Panel -->
+        <div class="studio-right-panel">
+          <!-- Only Prompts Tab for Generators -->
+          <div class="panel-tabs">
+            <button id="promptsTab" class="panel-tab active">
+              <i class="fas fa-comment-alt"></i> Prompts & Settings
+            </button>
+          </div>
+
+          <!-- Prompts Panel (Always visible in generator modes) -->
+          <div id="promptsPanel" class="panel-content active">
+            <div class="settings-group">
+              <label>Generation Size</label>
+              <div class="size-controls">
+                <input type="number" id="canvasWidth" value="1024" min="100" max="4096">
+                <span>×</span>
+                <input type="number" id="canvasHeight" value="1024" min="100" max="4096">
+              </div>
+              <div class="preset-sizes">
+                <button class="size-preset" data-width="1920" data-height="1080">1080p</button>
+                <button class="size-preset" data-width="1280" data-height="720">720p</button>
+                <button class="size-preset" data-width="1080" data-height="1080">Square</button>
+                <button class="size-preset" data-width="1080" data-height="1920">Vertical</button>
+              </div>
+            </div>
+
+            <div class="settings-group">
+              <label>Model Selection</label>
+              <select id="modelSelector" class="model-selector">
+                <optgroup label="General Purpose">
+                  <option value="sdxl">SDXL 1.0 - High Quality</option>
+                  <option value="sd2_1">Stable Diffusion 2.1</option>
+                  <option value="kadinsky">Kadinsky - Artistic</option>
+                </optgroup>
+                <optgroup label="Photorealistic">
+                  <option value="realistic_vision">Realistic Vision</option>
+                  <option value="epic_realism">Epic Realism</option>
+                  <option value="cyber_realistic">Cyber Realistic</option>
+                </optgroup>
+                <optgroup label="Artistic Styles">
+                  <option value="dreamshaper">DreamShaper</option>
+                  <option value="anime">Anime/Colorful</option>
+                  <option value="cartoon">Cartoon Style</option>
+                </optgroup>
+              </select>
+            </div>
+
+            <div class="settings-group">
+              <label>Style Presets</label>
+              <div class="style-grid">
+                <button class="style-preset" data-style="photorealistic">
+                  <i class="fas fa-camera"></i>
+                  Photorealistic
+                </button>
+                <button class="style-preset" data-style="artistic">
+                  <i class="fas fa-palette"></i>
+                  Artistic
+                </button>
+                <button class="style-preset" data-style="anime">
+                  <i class="fas fa-star"></i>
+                  Anime
+                </button>
+                <button class="style-preset" data-style="cartoon">
+                  <i class="fas fa-smile"></i>
+                  Cartoon
+                </button>
+                <button class="style-preset" data-style="abstract">
+                  <i class="fas fa-shapes"></i>
+                  Abstract
+                </button>
+                <button class="style-preset" data-style="cinematic">
+                  <i class="fas fa-film"></i>
+                  Cinematic
+                </button>
+              </div>
+            </div>
+
+            <div class="settings-group">
+              <label>Advanced Settings</label>
+              <div class="advanced-controls">
+                <div class="control-row">
+                  <label>Creativity</label>
+                  <input type="range" id="creativitySlider" min="0" max="100" value="50">
+                  <span id="creativityValue">50</span>
+                </div>
+                <div class="control-row">
+                  <label>Detail Level</label>
+                  <input type="range" id="detailSlider" min="0" max="100" value="70">
+                  <span id="detailValue">70</span>
+                </div>
+                <div class="control-row generator-video-only">
+                  <label>Motion Intensity</label>
+                  <input type="range" id="motionSlider" min="0" max="100" value="50">
+                  <span id="motionValue">50</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="settings-group">
+              <label>Negative Prompts</label>
+              <textarea id="negativePrompts" placeholder="Things you don't want in the generation..." rows="3"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Video Meeting Modal -->
+  <div class="video-meeting-modal" id="videoMeetingModal">
+    <div class="video-meeting-container">
+      <!-- VideoSDK Meeting Interface will be loaded here -->
+      <div class="video-meeting-header">
+        <div class="meeting-title">
+          <i class="fas fa-video"></i>
+          Video Meeting
+        </div>
+        <button class="close-meeting-btn" id="closeMeetingBtn">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="video-meeting-content" id="videoMeetingContent">
+        <div class="meeting-loading">
+          <i class="fas fa-video"></i>
+          <h3>Loading Video Meeting...</h3>
+          <p>Initializing VideoSDK...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="settings-modal" id="settingsModal">
+    <div class="settings-modal-content">
+      <div class="settings-modal-header">
+        <div class="settings-modal-title">
+          <i class="fas fa-cog"></i>
+          Settings
+        </div>
+        <button class="settings-close-btn" id="settingsCloseBtn">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <!-- AI Model Settings -->
+      <div class="settings-section">
+        <div class="settings-section-title">
+          <i class="fas fa-robot"></i>
+          AI Model
+        </div>
+        <div class="settings-grid">
+          <div class="setting-row">
+            <span class="setting-label">AI Model</span>
+            <select class="model-select" id="aiModelSelect">
+              <option value="gemini-2.0-flash-exp">Gemini 2.0 Flash</option>
+              <option value="gemini-2.5-flash-preview-05-20">Gemini 2.5 Flash Preview</option>
+            </select>
+          </div>
+
+          <div class="temperature-control">
+            <span class="temperature-label">Temperature</span>
+            <div class="temperature-slider-container">
+              <input type="range" class="temperature-slider" min="0" max="1" step="0.1" value="0.6" id="temperatureSlider">
+              <span class="temperature-value" id="temperatureValue">0.6</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Features Settings -->
+      <div class="settings-section">
+        <div class="settings-section-title">
+          <i class="fas fa-tools"></i>
+          Features
+        </div>
+        <div class="settings-grid">
+          <div class="setting-row">
+            <span class="setting-label">Code execution</span>
+            <label class="toggle-wrapper">
+              <input type="checkbox" class="toggle-input" id="codeExecutionToggle">
+              <span class="toggle-display"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <span class="setting-label">Grounding with Google Search</span>
+            <label class="toggle-wrapper">
+              <input type="checkbox" class="toggle-input" id="googleSearchToggle" checked>
+              <span class="toggle-display"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Voice Settings -->
+      <div class="settings-section">
+        <div class="settings-section-title">
+          <i class="fas fa-microphone"></i>
+          Voice
+        </div>
+        <div class="settings-grid">
+          <div class="setting-row">
+            <span class="setting-label">Voice</span>
+            <select class="model-select" id="voiceSelect">
+              <option value="Aoede">Aoede</option>
+              <option value="Puck">Puck</option>
+              <option value="Charon">Charon</option>
+              <option value="Kore">Kore</option>
+              <option value="Fenrir">Fenrir</option>
+            </select>
+          </div>
+
+          <div class="setting-row">
+            <span class="setting-label">Language</span>
+            <select class="model-select" id="languageSelect">
+              <option value="english">English (US)</option>
+              <option value="spanish">Spanish</option>
+              <option value="french">French</option>
+              <option value="german">German</option>
+              <option value="japanese">Japanese</option>
+            </select>
+          </div>
+
+          <div class="setting-row">
+            <span class="setting-label">Voice Output</span>
+            <label class="toggle-wrapper">
+              <input type="checkbox" class="toggle-input" id="voiceOutputToggle">
+              <span class="toggle-display"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Basic JavaScript for Tab Switching -->
+  <script src="script.js"></script>
+
+</body>
+</html>

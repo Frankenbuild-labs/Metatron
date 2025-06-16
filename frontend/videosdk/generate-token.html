@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>VideoSDK Token Generator</title>
+    <script src="https://cdn.jsdelivr.net/npm/jsonwebtoken@9.0.2/index.min.js"></script>
+</head>
+<body>
+    <h1>VideoSDK Token Generator</h1>
+    <button onclick="generateToken()">Generate Token</button>
+    <div id="result"></div>
+
+    <script>
+        function generateToken() {
+            const API_KEY = "fafccf7e-0141-4739-ac1c-353ab64a8ae3";
+            const SECRET_KEY = "ada532be7dc5ff7132e61a27735d5b1d560616a0030661d6c62df56efaf57d91";
+            
+            const payload = {
+                apikey: API_KEY,
+                permissions: ["allow_join", "allow_mod", "ask_join"],
+                iat: Math.floor(Date.now() / 1000),
+                exp: Math.floor(Date.now() / 1000) + (24 * 60 * 60) // 24 hours
+            };
+
+            // For client-side, we'll use a simple base64 encoding approach
+            // In production, this should be done server-side
+            const header = btoa(JSON.stringify({alg: "HS256", typ: "JWT"}));
+            const payloadStr = btoa(JSON.stringify(payload));
+            
+            // This is a simplified version - in production use proper JWT library
+            const token = `${header}.${payloadStr}.signature`;
+            
+            document.getElementById('result').innerHTML = `
+                <h3>Generated Token:</h3>
+                <textarea rows="5" cols="80">${token}</textarea>
+                <p><strong>Note:</strong> This is a simplified token. For production, use proper server-side JWT generation.</p>
+            `;
+        }
+    </script>
+</body>
+</html>

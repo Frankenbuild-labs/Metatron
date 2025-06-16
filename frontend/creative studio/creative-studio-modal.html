@@ -1,0 +1,2296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creative Studio Modal</title>
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/styles-new.css">
+    
+    <!-- Segmind Service -->
+    <script src="js/services/segmind-service.js"></script>
+    
+    <style>
+        /* Creative Studio Modal Styles */
+        .creative-studio-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 10, 0.95);
+            z-index: 10000;
+            backdrop-filter: blur(10px);
+        }
+
+        .creative-studio-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .creative-studio-container {
+            width: 98%;
+            height: 98%;
+            max-width: 1800px;
+            max-height: 1000px;
+            background: var(--bg-primary);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .creative-studio-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .studio-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-primary);
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        /* Mode Navigation Tabs */
+        .mode-navigation {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .mode-tab {
+            padding: 8px 16px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .mode-tab:hover {
+            background: var(--accent-primary);
+            color: white;
+        }
+
+        .mode-tab.active {
+            background: var(--accent-primary);
+            color: white;
+            border-color: var(--accent-primary);
+        }
+
+        .studio-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .studio-control-btn {
+            padding: 8px 12px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .studio-control-btn:hover {
+            background: var(--accent-primary);
+            color: white;
+        }
+
+        .close-studio-btn {
+            padding: 8px 12px;
+            background: var(--danger-color);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .creative-studio-body {
+            flex: 1;
+            display: flex;
+            height: calc(100% - 70px);
+        }
+
+        /* Main Content Layout */
+        .studio-main-content {
+            display: flex;
+            flex: 1;
+            height: 100%;
+        }
+
+        .content-mode {
+            display: none;
+            flex: 1;
+            height: 100%;
+        }
+
+        .content-mode.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Editor Mode */
+        .editor-loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--text-secondary);
+        }
+
+        .editor-loading i {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: var(--accent-primary);
+        }
+
+        .motionity-editor {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #000;
+        }
+
+        /* Generator Interface */
+        .generator-interface {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            background: var(--bg-primary);
+        }
+
+        .generator-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .generation-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .preview-area {
+            flex: 1;
+            background: var(--bg-secondary);
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .preview-placeholder {
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
+        .preview-placeholder i {
+            font-size: 64px;
+            margin-bottom: 20px;
+            color: var(--accent-primary);
+            opacity: 0.6;
+        }
+
+        .preview-placeholder h3 {
+            margin: 0 0 10px 0;
+            color: var(--text-primary);
+            font-size: 24px;
+        }
+
+        .preview-placeholder p {
+            margin: 0;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .generation-controls {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .prompt-input-area {
+            display: flex;
+            gap: 15px;
+            align-items: flex-end;
+        }
+
+        .prompt-input-area textarea {
+            flex: 1;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .prompt-input-area textarea:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        .generate-btn {
+            padding: 12px 24px;
+            background: var(--accent-primary);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .generate-btn:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+        }
+
+        .generate-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .generation-progress {
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--bg-primary);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent-primary);
+            border-radius: 3px;
+            width: 0%;
+            animation: progressAnimation 2s ease-in-out infinite;
+        }
+
+        @keyframes progressAnimation {
+            0% { width: 0%; }
+            50% { width: 70%; }
+            100% { width: 100%; }
+        }
+
+        /* Right Panel - Hidden for editor, shown for generators */
+        .studio-right-panel {
+            width: 320px;
+            background: var(--bg-secondary);
+            border-left: 1px solid var(--border-color);
+            display: none; /* Hidden by default (editor mode) */
+            flex-direction: column;
+        }
+        
+        /* Show right panel ONLY for generator modes */
+        .studio-right-panel.generator-mode {
+            display: flex;
+        }
+
+        .panel-tabs {
+            display: flex;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .panel-tab {
+            flex: 1;
+            padding: 12px 16px;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s;
+            border-bottom: 2px solid transparent;
+        }
+
+        .panel-tab:hover {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .panel-tab.active {
+            background: var(--bg-secondary);
+            color: var(--accent-primary);
+            border-bottom-color: var(--accent-primary);
+        }
+
+        .panel-tab.generator-only {
+            display: none;
+        }
+
+        .studio-right-panel.generator-mode .panel-tab.generator-only {
+            display: flex;
+        }
+
+        .panel-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .panel-content.active {
+            display: block;
+        }
+
+        .settings-group {
+            margin-bottom: 25px;
+        }
+
+        .settings-group label {
+            display: block;
+            color: var(--text-primary);
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .size-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .size-controls input {
+            flex: 1;
+            padding: 8px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            color: var(--text-primary);
+            font-size: 12px;
+        }
+
+        .size-controls span {
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .preset-sizes {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .size-preset {
+            padding: 6px 12px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 11px;
+            transition: all 0.2s;
+        }
+
+        .size-preset:hover {
+            background: var(--accent-primary);
+            color: white;
+            border-color: var(--accent-primary);
+        }
+
+        .background-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .background-controls input[type="color"] {
+            width: 40px;
+            height: 32px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .background-controls select {
+            flex: 1;
+            padding: 8px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            color: var(--text-primary);
+            font-size: 12px;
+        }
+
+        .duration-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .duration-controls input {
+            width: 80px;
+            padding: 8px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            color: var(--text-primary);
+            font-size: 12px;
+        }
+
+        .duration-controls span {
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        .style-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .style-preset {
+            padding: 12px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 11px;
+            text-align: center;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .style-preset:hover {
+            background: var(--accent-primary);
+            color: white;
+            border-color: var(--accent-primary);
+        }
+
+        .style-preset.active {
+            background: var(--accent-primary);
+            color: white;
+            border-color: var(--accent-primary);
+        }
+
+        .style-preset i {
+            font-size: 16px;
+        }
+
+        .advanced-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .control-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .control-row label {
+            flex: 1;
+            margin: 0;
+            font-size: 12px;
+        }
+
+        .control-row input[type="range"] {
+            flex: 2;
+            margin: 0;
+        }
+
+        .control-row span {
+            width: 30px;
+            text-align: center;
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .settings-group textarea {
+            width: 100%;
+            padding: 10px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 12px;
+            resize: vertical;
+        }
+
+        .settings-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        .settings-group select {
+            width: 100%;
+            padding: 8px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            color: var(--text-primary);
+            font-size: 12px;
+        }
+
+        /* Mode-specific visibility */
+        .editor-only {
+            display: block;
+        }
+
+        .generator-only {
+            display: none;
+        }
+
+        .generator-video-only {
+            display: none;
+        }
+
+        .studio-right-panel.generator-mode .editor-only {
+            display: none;
+        }
+
+        .studio-right-panel.generator-mode .generator-only {
+            display: block;
+        }
+
+        .studio-right-panel.video-mode .generator-video-only {
+            display: block;
+        }
+
+        /* Generated content display */
+        .generated-content {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .content-actions {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            gap: 8px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .preview-area:hover .content-actions {
+            opacity: 1;
+        }
+
+        .action-btn {
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.8);
+            border: none;
+            border-radius: 4px;
+            color: white;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+        }
+
+        .action-btn:hover {
+            background: var(--accent-primary);
+        }
+
+        /* AI Enhancement Panel */
+        .ai-enhancement-panel {
+            position: absolute;
+            top: 80px;
+            right: 20px;
+            width: 300px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            z-index: 10001;
+            transform: translateX(320px);
+            transition: transform 0.3s ease;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        }
+
+        .ai-enhancement-panel.active {
+            transform: translateX(0);
+        }
+
+        .ai-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: var(--accent-primary);
+            color: white;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .ai-panel-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+        }
+
+        .ai-panel-close {
+            background: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .ai-feature {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .ai-feature:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .ai-feature-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .ai-feature-desc {
+            font-size: 10px;
+            opacity: 0.8;
+        }
+
+        /* Generator Mode Tabs */
+        .generator-mode-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .mode-selector {
+            padding: 10px 20px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .mode-selector:hover {
+            background: var(--accent-primary);
+            color: white;
+            border-color: var(--accent-primary);
+        }
+
+        .mode-selector.active {
+            background: var(--accent-primary);
+            color: white;
+            border-color: var(--accent-primary);
+        }
+
+        /* Mode Controls */
+        .mode-controls {
+            display: none;
+        }
+
+        .mode-controls.active {
+            display: block;
+        }
+
+        /* Upload Area */
+        .upload-area {
+            margin-bottom: 15px;
+        }
+
+        .upload-btn {
+            padding: 40px;
+            width: 100%;
+            background: var(--bg-tertiary);
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s;
+        }
+
+        .upload-btn:hover {
+            background: var(--bg-primary);
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
+        }
+
+        .upload-btn i {
+            font-size: 32px;
+        }
+
+        .uploaded-preview {
+            margin-top: 15px;
+            max-height: 200px;
+            overflow: hidden;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .uploaded-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* ControlNet Options */
+        .controlnet-options {
+            margin-bottom: 15px;
+        }
+
+        .controlnet-options select {
+            width: 100%;
+            padding: 12px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        /* Enhancement Grid */
+        .enhance-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .enhance-option {
+            padding: 30px 20px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 13px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s;
+        }
+
+        .enhance-option:hover {
+            background: var(--accent-primary);
+            color: white;
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
+        }
+
+        .enhance-option.selected {
+            background: var(--accent-primary);
+            color: white;
+            border-color: var(--accent-primary);
+        }
+
+        .enhance-option i {
+            font-size: 28px;
+        }
+
+        /* Tools Grid */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .tool-card {
+            padding: 30px 20px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tool-card:hover {
+            background: var(--accent-primary);
+            color: white;
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
+        }
+
+        .tool-card i {
+            font-size: 36px;
+            margin-bottom: 15px;
+            color: var(--accent-primary);
+        }
+
+        .tool-card:hover i {
+            color: white;
+        }
+
+        .tool-card h4 {
+            margin: 0 0 8px 0;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .tool-card p {
+            margin: 0;
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        /* Model Selector (for right panel) */
+        .model-selector {
+            width: 100%;
+            padding: 10px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+
+        /* Notification animations */
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Creative Studio Modal -->
+    <div id="creativeStudioModal" class="creative-studio-modal">
+        <div class="creative-studio-container">
+            <!-- Studio Header -->
+            <div class="creative-studio-header">
+                <div class="studio-title">
+                    <i class="fas fa-palette"></i>
+                    Creative Studio
+                </div>
+                
+                <!-- Mode Navigation Tabs -->
+                <div class="mode-navigation">
+                    <button id="editorModeBtn" class="mode-tab active">
+                        <i class="fas fa-edit"></i> Editor
+                    </button>
+                    <button id="imageGenModeBtn" class="mode-tab">
+                        <i class="fas fa-image"></i> Image Generator
+                    </button>
+                    <button id="videoGenModeBtn" class="mode-tab">
+                        <i class="fas fa-video"></i> Video Generator
+                    </button>
+                </div>
+                
+                <!-- Studio Controls -->
+                <div class="studio-controls">
+                    <button id="newProjectBtn" class="studio-control-btn">
+                        <i class="fas fa-plus"></i> New Project
+                    </button>
+                    <button id="aiEnhanceBtn" class="studio-control-btn ai-enhance">
+                        <i class="fas fa-magic"></i> AI Enhance
+                    </button>
+                    <button id="exportProjectBtn" class="studio-control-btn export">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                    <button id="closeStudioBtn" class="close-studio-btn">
+                        <i class="fas fa-times"></i> Close
+                    </button>
+                </div>
+            </div>
+
+            <!-- Studio Body -->
+            <div class="creative-studio-body">
+                <!-- Main Content Area -->
+                <div class="studio-main-content">
+                    <!-- Editor Mode (Default) -->
+                    <div id="editorMode" class="content-mode active">
+                        <!-- Loading State -->
+                        <div id="editorLoading" class="editor-loading">
+                            <i class="fas fa-magic"></i>
+                            <h3>Loading Creative Studio</h3>
+                            <p>Initializing the motion graphics editor with AI enhancements...</p>
+                        </div>
+
+                        <!-- Motionity Editor Container -->
+                        <iframe id="motionityEditor" class="motionity-editor" style="display: none;"></iframe>
+                    </div>
+
+                    <!-- Image Generator Mode -->
+                    <div id="imageGenMode" class="content-mode">
+                        <div class="generator-interface">
+                            <div class="generator-main">
+                                <!-- Mode Selection Tabs -->
+                                <div class="generator-mode-tabs">
+                                    <button class="mode-selector active" data-mode="text2img">
+                                        <i class="fas fa-font"></i> Text to Image
+                                    </button>
+                                    <button class="mode-selector" data-mode="img2img">
+                                        <i class="fas fa-image"></i> Image to Image
+                                    </button>
+                                    <button class="mode-selector" data-mode="controlnet">
+                                        <i class="fas fa-project-diagram"></i> ControlNet
+                                    </button>
+                                    <button class="mode-selector" data-mode="enhance">
+                                        <i class="fas fa-magic"></i> Enhance
+                                    </button>
+                                    <button class="mode-selector" data-mode="tools">
+                                        <i class="fas fa-tools"></i> Tools
+                                    </button>
+                                </div>
+
+                                <div class="generation-area">
+                                    <div id="imagePreview" class="preview-area">
+                                        <div class="preview-placeholder">
+                                            <i class="fas fa-image"></i>
+                                            <h3>AI Image Generator</h3>
+                                            <p>Choose a mode above to get started</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="generation-controls">
+                                        <!-- Text to Image Mode -->
+                                        <div class="mode-controls active" data-mode="text2img">
+                                            <div class="prompt-input-area">
+                                                <textarea id="imagePrompt" placeholder="Describe the image you want to create..." rows="3"></textarea>
+                                                <button id="generateImageBtn" class="generate-btn">
+                                                    <i class="fas fa-magic"></i> Generate
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Image to Image Mode -->
+                                        <div class="mode-controls" data-mode="img2img" style="display: none;">
+                                            <div class="upload-area">
+                                                <input type="file" id="img2imgInput" accept="image/*" style="display: none;">
+                                                <button class="upload-btn" onclick="document.getElementById('img2imgInput').click()">
+                                                    <i class="fas fa-upload"></i> Upload Image
+                                                </button>
+                                                <div id="uploadedImagePreview" class="uploaded-preview" style="display: none;"></div>
+                                            </div>
+                                            <div class="prompt-input-area">
+                                                <textarea id="img2imgPrompt" placeholder="Describe how to transform the image..." rows="3"></textarea>
+                                                <button id="transformImageBtn" class="generate-btn">
+                                                    <i class="fas fa-sync-alt"></i> Transform
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- ControlNet Mode -->
+                                        <div class="mode-controls" data-mode="controlnet" style="display: none;">
+                                            <div class="controlnet-options">
+                                                <select id="controlnetType">
+                                                    <option value="canny">Canny Edge Detection</option>
+                                                    <option value="depth">Depth Map</option>
+                                                    <option value="openpose">OpenPose</option>
+                                                    <option value="scribble">Scribble</option>
+                                                    <option value="softedge">Soft Edge</option>
+                                                </select>
+                                            </div>
+                                            <div class="upload-area">
+                                                <input type="file" id="controlnetInput" accept="image/*" style="display: none;">
+                                                <button class="upload-btn" onclick="document.getElementById('controlnetInput').click()">
+                                                    <i class="fas fa-upload"></i> Upload Control Image
+                                                </button>
+                                            </div>
+                                            <div class="prompt-input-area">
+                                                <textarea id="controlnetPrompt" placeholder="Describe the output image..." rows="3"></textarea>
+                                                <button id="controlnetBtn" class="generate-btn">
+                                                    <i class="fas fa-project-diagram"></i> Generate
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Enhancement Mode -->
+                                        <div class="mode-controls" data-mode="enhance" style="display: none;">
+                                            <div class="enhance-options">
+                                                <div class="enhance-grid">
+                                                    <button class="enhance-option" data-enhance="upscale">
+                                                        <i class="fas fa-expand-arrows-alt"></i>
+                                                        <span>Upscale (ESRGAN)</span>
+                                                    </button>
+                                                    <button class="enhance-option" data-enhance="face-restore">
+                                                        <i class="fas fa-user-circle"></i>
+                                                        <span>Face Restoration</span>
+                                                    </button>
+                                                    <button class="enhance-option" data-enhance="background-remove">
+                                                        <i class="fas fa-eraser"></i>
+                                                        <span>Remove Background</span>
+                                                    </button>
+                                                    <button class="enhance-option" data-enhance="outpaint">
+                                                        <i class="fas fa-expand"></i>
+                                                        <span>Outpainting</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="upload-area">
+                                                <input type="file" id="enhanceInput" accept="image/*" style="display: none;">
+                                                <button class="upload-btn" onclick="document.getElementById('enhanceInput').click()">
+                                                    <i class="fas fa-upload"></i> Upload Image to Enhance
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Tools Mode -->
+                                        <div class="mode-controls" data-mode="tools" style="display: none;">
+                                            <div class="tools-grid">
+                                                <div class="tool-card" data-tool="qr">
+                                                    <i class="fas fa-qrcode"></i>
+                                                    <h4>QR Code Generator</h4>
+                                                    <p>Create artistic QR codes</p>
+                                                </div>
+                                                <div class="tool-card" data-tool="faceswap">
+                                                    <i class="fas fa-exchange-alt"></i>
+                                                    <h4>Face Swap</h4>
+                                                    <p>Swap faces between images</p>
+                                                </div>
+                                                <div class="tool-card" data-tool="segment">
+                                                    <i class="fas fa-cut"></i>
+                                                    <h4>Segment Anything</h4>
+                                                    <p>Advanced image segmentation</p>
+                                                </div>
+                                                <div class="tool-card" data-tool="word2img">
+                                                    <i class="fas fa-font"></i>
+                                                    <h4>Word to Image</h4>
+                                                    <p>Typography-based images</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="generation-progress" id="imageProgress" style="display: none;">
+                                            <div class="progress-bar">
+                                                <div class="progress-fill"></div>
+                                            </div>
+                                            <p>Processing...</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Video Generator Mode -->
+                    <div id="videoGenMode" class="content-mode">
+                        <div class="generator-interface">
+                            <div class="generator-main">
+                                <div class="generation-area">
+                                    <div id="videoPreview" class="preview-area">
+                                        <div class="preview-placeholder">
+                                            <i class="fas fa-video"></i>
+                                            <h3>AI Video Generator</h3>
+                                            <p>Create dynamic videos from text descriptions</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="generation-controls">
+                                        <div class="prompt-input-area">
+                                            <textarea id="videoPrompt" placeholder="Describe the video you want to create..." rows="3"></textarea>
+                                            <button id="generateVideoBtn" class="generate-btn">
+                                                <i class="fas fa-magic"></i> Generate Video
+                                            </button>
+                                        </div>
+                                        
+                                        <div class="generation-progress" id="videoProgress" style="display: none;">
+                                            <div class="progress-bar">
+                                                <div class="progress-fill"></div>
+                                            </div>
+                                            <p>Generating your video...</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Panel -->
+                <div class="studio-right-panel">
+                    <!-- Only Prompts Tab for Generators -->
+                    <div class="panel-tabs">
+                        <button id="promptsTab" class="panel-tab active">
+                            <i class="fas fa-comment-alt"></i> Prompts & Settings
+                        </button>
+                    </div>
+
+                    <!-- Prompts Panel (Always visible in generator modes) -->
+                    <div id="promptsPanel" class="panel-content active">
+                        <div class="settings-group">
+                            <label>Generation Size</label>
+                            <div class="size-controls">
+                                <input type="number" id="canvasWidth" value="1024" min="100" max="4096">
+                                <span>×</span>
+                                <input type="number" id="canvasHeight" value="1024" min="100" max="4096">
+                            </div>
+                            <div class="preset-sizes">
+                                <button class="size-preset" data-width="1920" data-height="1080">1080p</button>
+                                <button class="size-preset" data-width="1280" data-height="720">720p</button>
+                                <button class="size-preset" data-width="1080" data-height="1080">Square</button>
+                                <button class="size-preset" data-width="1080" data-height="1920">Vertical</button>
+                            </div>
+                        </div>
+
+                        <div class="settings-group">
+                            <label>Model Selection</label>
+                            <select id="modelSelector" class="model-selector">
+                                <optgroup label="General Purpose">
+                                    <option value="sdxl">SDXL 1.0 - High Quality</option>
+                                    <option value="sd2_1">Stable Diffusion 2.1</option>
+                                    <option value="kadinsky">Kadinsky - Artistic</option>
+                                </optgroup>
+                                <optgroup label="Photorealistic">
+                                    <option value="realistic_vision">Realistic Vision</option>
+                                    <option value="epic_realism">Epic Realism</option>
+                                    <option value="cyber_realistic">Cyber Realistic</option>
+                                </optgroup>
+                                <optgroup label="Artistic Styles">
+                                    <option value="dreamshaper">DreamShaper</option>
+                                    <option value="anime">Anime/Colorful</option>
+                                    <option value="cartoon">Cartoon Style</option>
+                                </optgroup>
+                            </select>
+                        </div>
+
+                        <div class="settings-group">
+                            <label>Style Presets</label>
+                            <div class="style-grid">
+                                <button class="style-preset" data-style="photorealistic">
+                                    <i class="fas fa-camera"></i>
+                                    Photorealistic
+                                </button>
+                                <button class="style-preset" data-style="artistic">
+                                    <i class="fas fa-palette"></i>
+                                    Artistic
+                                </button>
+                                <button class="style-preset" data-style="anime">
+                                    <i class="fas fa-star"></i>
+                                    Anime
+                                </button>
+                                <button class="style-preset" data-style="cartoon">
+                                    <i class="fas fa-smile"></i>
+                                    Cartoon
+                                </button>
+                                <button class="style-preset" data-style="abstract">
+                                    <i class="fas fa-shapes"></i>
+                                    Abstract
+                                </button>
+                                <button class="style-preset" data-style="cinematic">
+                                    <i class="fas fa-film"></i>
+                                    Cinematic
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="settings-group">
+                            <label>Advanced Settings</label>
+                            <div class="advanced-controls">
+                                <div class="control-row">
+                                    <label>Creativity</label>
+                                    <input type="range" id="creativitySlider" min="0" max="100" value="50">
+                                    <span id="creativityValue">50</span>
+                                </div>
+                                <div class="control-row">
+                                    <label>Detail Level</label>
+                                    <input type="range" id="detailSlider" min="0" max="100" value="70">
+                                    <span id="detailValue">70</span>
+                                </div>
+                                <div class="control-row generator-video-only">
+                                    <label>Motion Intensity</label>
+                                    <input type="range" id="motionSlider" min="0" max="100" value="50">
+                                    <span id="motionValue">50</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="settings-group">
+                            <label>Negative Prompts</label>
+                            <textarea id="negativePrompts" placeholder="Things you don't want in the generation..." rows="3"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Enhancement Panel -->
+                <div id="aiEnhancementPanel" class="ai-enhancement-panel">
+                    <div class="ai-panel-header">
+                        <div class="ai-panel-title">
+                            <i class="fas fa-robot"></i> AI Enhancements
+                        </div>
+                        <button id="aiPanelClose" class="ai-panel-close">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+
+                    <div class="ai-feature" id="autoAnimateFeature">
+                        <div class="ai-feature-title">Auto Animate</div>
+                        <div class="ai-feature-desc">Generate smooth animations automatically</div>
+                    </div>
+
+                    <div class="ai-feature" id="smartTransitionsFeature">
+                        <div class="ai-feature-title">Smart Transitions</div>
+                        <div class="ai-feature-desc">AI-powered scene transitions</div>
+                    </div>
+
+                    <div class="ai-feature" id="colorPaletteFeature">
+                        <div class="ai-feature-title">AI Color Palette</div>
+                        <div class="ai-feature-desc">Generate cohesive color schemes</div>
+                    </div>
+
+                    <div class="ai-feature" id="voiceoverFeature">
+                        <div class="ai-feature-title">AI Voiceover</div>
+                        <div class="ai-feature-desc">Generate narration with Gemini AI</div>
+                    </div>
+
+                    <div class="ai-feature" id="scriptGeneratorFeature">
+                        <div class="ai-feature-title">Script Generator</div>
+                        <div class="ai-feature-desc">Create video scripts with AI</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * Creative Studio Class
+         * Manages the entire creative studio interface and functionality
+         */
+        class CreativeStudio {
+            constructor() {
+                this.modal = document.getElementById('creativeStudioModal');
+                this.editor = document.getElementById('motionityEditor');
+                this.aiPanel = document.getElementById('aiEnhancementPanel');
+                this.currentMode = 'editor';
+                this.segmindService = null;
+                this.lastGeneration = null;
+                
+                this.setupEventListeners();
+                this.setupMotionityEditor();
+            }
+
+            setupEventListeners() {
+                // Window controls
+                document.getElementById('closeStudioBtn').addEventListener('click', () => {
+                    this.closeStudio();
+                });
+
+                // Mode Navigation
+                document.getElementById('editorModeBtn').addEventListener('click', () => {
+                    this.switchMode('editor');
+                });
+
+                document.getElementById('imageGenModeBtn').addEventListener('click', () => {
+                    this.switchMode('imageGen');
+                });
+
+                document.getElementById('videoGenModeBtn').addEventListener('click', () => {
+                    this.switchMode('videoGen');
+                });
+
+                // Generator Mode Selectors
+                document.querySelectorAll('.mode-selector').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        this.switchGeneratorMode(btn.dataset.mode);
+                    });
+                });
+
+                // Generator Controls
+                document.getElementById('generateImageBtn').addEventListener('click', () => {
+                    this.generateImage();
+                });
+
+                document.getElementById('generateVideoBtn').addEventListener('click', () => {
+                    this.generateVideo();
+                });
+
+                // Image to Image Controls
+                document.getElementById('transformImageBtn').addEventListener('click', () => {
+                    this.transformImage();
+                });
+
+                // ControlNet Controls
+                document.getElementById('controlnetBtn').addEventListener('click', () => {
+                    this.generateControlNet();
+                });
+
+                // Enhancement Options
+                document.querySelectorAll('.enhance-option').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        this.selectedEnhancement = btn.dataset.enhance;
+                        document.querySelectorAll('.enhance-option').forEach(b => b.classList.remove('selected'));
+                        btn.classList.add('selected');
+                    });
+                });
+
+                // Tool Cards
+                document.querySelectorAll('.tool-card').forEach(card => {
+                    card.addEventListener('click', () => {
+                        this.openTool(card.dataset.tool);
+                    });
+                });
+
+                // File Uploads
+                document.getElementById('img2imgInput').addEventListener('change', (e) => {
+                    this.handleImageUpload(e, 'uploadedImagePreview');
+                });
+
+                document.getElementById('controlnetInput').addEventListener('change', (e) => {
+                    this.handleImageUpload(e, 'controlnetPreview');
+                });
+
+                document.getElementById('enhanceInput').addEventListener('change', (e) => {
+                    this.handleImageUpload(e, 'enhancePreview');
+                    if (this.selectedEnhancement) {
+                        this.enhanceImage();
+                    }
+                });
+
+                // Settings Controls
+                this.setupSettingsControls();
+
+                // Studio controls
+                document.getElementById('newProjectBtn').addEventListener('click', () => {
+                    this.createNewProject();
+                });
+
+                document.getElementById('aiEnhanceBtn').addEventListener('click', () => {
+                    this.toggleAIPanel();
+                });
+
+                document.getElementById('exportProjectBtn').addEventListener('click', () => {
+                    this.exportProject();
+                });
+
+                // AI Panel
+                document.getElementById('aiPanelClose').addEventListener('click', () => {
+                    this.aiPanel.classList.remove('active');
+                });
+
+                // AI Features
+                document.getElementById('autoAnimateFeature').addEventListener('click', () => {
+                    this.handleAIFeature('auto-animate');
+                });
+
+                document.getElementById('smartTransitionsFeature').addEventListener('click', () => {
+                    this.handleAIFeature('smart-transitions');
+                });
+
+                document.getElementById('colorPaletteFeature').addEventListener('click', () => {
+                    this.handleAIFeature('color-palette');
+                });
+
+                document.getElementById('voiceoverFeature').addEventListener('click', () => {
+                    this.handleAIFeature('voiceover');
+                });
+
+                document.getElementById('scriptGeneratorFeature').addEventListener('click', () => {
+                    this.handleAIFeature('script-generator');
+                });
+
+                // Close modal when clicking outside
+                this.modal.addEventListener('click', (e) => {
+                    if (e.target === this.modal) {
+                        this.closeStudio();
+                    }
+                });
+
+                // Escape key to close modal
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && this.modal.classList.contains('active')) {
+                        this.closeStudio();
+                    }
+                });
+            }
+
+            setupSettingsControls() {
+                // Size preset buttons
+                document.querySelectorAll('.size-preset').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const width = btn.dataset.width;
+                        const height = btn.dataset.height;
+                        document.getElementById('canvasWidth').value = width;
+                        document.getElementById('canvasHeight').value = height;
+                    });
+                });
+
+                // Style preset buttons
+                document.querySelectorAll('.style-preset').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        // Remove active from all
+                        document.querySelectorAll('.style-preset').forEach(b => b.classList.remove('active'));
+                        // Add active to clicked
+                        btn.classList.add('active');
+                        
+                        const style = btn.dataset.style;
+                        this.applyStylePreset(style);
+                    });
+                });
+
+                // Slider value updates
+                const creativitySlider = document.getElementById('creativitySlider');
+                const creativityValue = document.getElementById('creativityValue');
+                creativitySlider.addEventListener('input', () => {
+                    creativityValue.textContent = creativitySlider.value;
+                });
+
+                const detailSlider = document.getElementById('detailSlider');
+                const detailValue = document.getElementById('detailValue');
+                detailSlider.addEventListener('input', () => {
+                    detailValue.textContent = detailSlider.value;
+                });
+
+                const motionSlider = document.getElementById('motionSlider');
+                const motionValue = document.getElementById('motionValue');
+                motionSlider.addEventListener('input', () => {
+                    motionValue.textContent = motionSlider.value;
+                });
+            }
+
+            switchMode(mode) {
+                // Update mode tabs
+                document.querySelectorAll('.mode-tab').forEach(tab => tab.classList.remove('active'));
+                document.getElementById(`${mode}ModeBtn`).classList.add('active');
+
+                // Update content modes
+                document.querySelectorAll('.content-mode').forEach(content => content.classList.remove('active'));
+                document.getElementById(`${mode}Mode`).classList.add('active');
+
+                // Update right panel classes
+                const rightPanel = document.querySelector('.studio-right-panel');
+                rightPanel.classList.remove('generator-mode', 'video-mode');
+                
+                if (mode === 'imageGen' || mode === 'videoGen') {
+                    rightPanel.classList.add('generator-mode');
+                }
+
+                if (mode === 'videoGen') {
+                    rightPanel.classList.add('video-mode');
+                }
+
+                this.currentMode = mode;
+                console.log(`Switched to ${mode} mode`);
+            }
+
+            switchGeneratorMode(mode) {
+                // Update mode selector buttons
+                document.querySelectorAll('.mode-selector').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.querySelector(`.mode-selector[data-mode="${mode}"]`).classList.add('active');
+
+                // Update mode controls visibility
+                document.querySelectorAll('.mode-controls').forEach(controls => {
+                    controls.classList.remove('active');
+                    controls.style.display = 'none';
+                });
+                const activeControls = document.querySelector(`.mode-controls[data-mode="${mode}"]`);
+                if (activeControls) {
+                    activeControls.classList.add('active');
+                    activeControls.style.display = 'block';
+                }
+
+                console.log(`Switched to ${mode} generator mode`);
+            }
+
+            async handleImageUpload(event, previewId) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const preview = document.getElementById(previewId);
+                    if (preview) {
+                        preview.innerHTML = `<img src="${e.target.result}" style="max-width: 100%; max-height: 200px;">`;
+                        preview.style.display = 'block';
+                    }
+                    
+                    // Store base64 for later use
+                    this.uploadedImage = e.target.result.split(',')[1]; // Remove data:image/jpeg;base64, part
+                };
+                reader.readAsDataURL(file);
+            }
+
+            async transformImage() {
+                if (!this.uploadedImage) {
+                    alert('Please upload an image first');
+                    return;
+                }
+
+                const prompt = document.getElementById('img2imgPrompt').value;
+                if (!prompt.trim()) {
+                    alert('Please enter a transformation prompt');
+                    return;
+                }
+
+                const btn = document.getElementById('transformImageBtn');
+                const progress = document.getElementById('imageProgress');
+                const preview = document.getElementById('imagePreview');
+
+                // Show loading state
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Transforming...';
+                progress.style.display = 'block';
+
+                try {
+                    if (!this.segmindService) {
+                        this.segmindService = new SegmindService();
+                    }
+
+                    const result = await this.segmindService.generateVariations(this.uploadedImage, prompt, 0.7);
+
+                    if (result.success && result.imageUrl) {
+                        preview.innerHTML = `
+                            <img src="${result.imageUrl}" class="generated-content" alt="Transformed Image">
+                            <div class="content-actions">
+                                <button class="action-btn" title="Download" onclick="window.creativeStudio.downloadImage('${result.imageUrl}')">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <button class="action-btn" title="Use in Editor" onclick="window.creativeStudio.useImageInEditor('${result.imageUrl}')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="action-btn" title="Transform Again" onclick="window.creativeStudio.transformImage()">
+                                    <i class="fas fa-sync"></i>
+                                </button>
+                            </div>
+                        `;
+                        this.showNotification('✅ Image transformed successfully!', 'success');
+                    }
+                } catch (error) {
+                    console.error('Transform failed:', error);
+                    this.showNotification(`❌ Transform failed: ${error.message}`, 'error');
+                } finally {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-sync-alt"></i> Transform';
+                    progress.style.display = 'none';
+                }
+            }
+
+            async generateControlNet() {
+                if (!this.uploadedImage) {
+                    alert('Please upload a control image first');
+                    return;
+                }
+
+                const prompt = document.getElementById('controlnetPrompt').value;
+                if (!prompt.trim()) {
+                    alert('Please enter a prompt');
+                    return;
+                }
+
+                const controlType = document.getElementById('controlnetType').value;
+                const btn = document.getElementById('controlnetBtn');
+                const progress = document.getElementById('imageProgress');
+                const preview = document.getElementById('imagePreview');
+
+                // Show loading state
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+                progress.style.display = 'block';
+
+                try {
+                    if (!this.segmindService) {
+                        this.segmindService = new SegmindService();
+                    }
+
+                    // Call ControlNet API through backend
+                    const response = await fetch('http://localhost:5002/api/segmind/controlnet', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            prompt: prompt,
+                            image: this.uploadedImage,
+                            control_type: controlType
+                        })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success && result.image) {
+                        preview.innerHTML = `
+                            <img src="data:image/png;base64,${result.image}" class="generated-content" alt="ControlNet Result">
+                            <div class="content-actions">
+                                <button class="action-btn" title="Download" onclick="window.creativeStudio.downloadImage('data:image/png;base64,${result.image}')">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <button class="action-btn" title="Use in Editor" onclick="window.creativeStudio.useImageInEditor('data:image/png;base64,${result.image}')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </div>
+                        `;
+                        this.showNotification('✅ ControlNet generation successful!', 'success');
+                    }
+                } catch (error) {
+                    console.error('ControlNet failed:', error);
+                    this.showNotification(`❌ ControlNet failed: ${error.message}`, 'error');
+                } finally {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-project-diagram"></i> Generate';
+                    progress.style.display = 'none';
+                }
+            }
+
+            async enhanceImage() {
+                if (!this.uploadedImage) {
+                    alert('Please upload an image first');
+                    return;
+                }
+
+                if (!this.selectedEnhancement) {
+                    alert('Please select an enhancement type');
+                    return;
+                }
+
+                const progress = document.getElementById('imageProgress');
+                const preview = document.getElementById('imagePreview');
+
+                // Show loading state
+                progress.style.display = 'block';
+
+                try {
+                    if (!this.segmindService) {
+                        this.segmindService = new SegmindService();
+                    }
+
+                    const result = await this.segmindService.enhanceImage(this.uploadedImage, this.selectedEnhancement);
+
+                    if (result.success && result.imageUrl) {
+                        preview.innerHTML = `
+                            <img src="${result.imageUrl}" class="generated-content" alt="Enhanced Image">
+                            <div class="content-actions">
+                                <button class="action-btn" title="Download" onclick="window.creativeStudio.downloadImage('${result.imageUrl}')">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <button class="action-btn" title="Use in Editor" onclick="window.creativeStudio.useImageInEditor('${result.imageUrl}')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </div>
+                        `;
+                        this.showNotification(`✅ Image ${this.selectedEnhancement} successful!`, 'success');
+                    }
+                } catch (error) {
+                    console.error('Enhancement failed:', error);
+                    this.showNotification(`❌ Enhancement failed: ${error.message}`, 'error');
+                } finally {
+                    progress.style.display = 'none';
+                }
+            }
+
+            async openTool(toolType) {
+                const preview = document.getElementById('imagePreview');
+                
+                switch(toolType) {
+                    case 'qr':
+                        preview.innerHTML = `
+                            <div class="tool-interface" style="padding: 40px; text-align: center;">
+                                <h3>QR Code Generator</h3>
+                                <div style="margin: 20px 0;">
+                                    <input type="text" id="qrText" placeholder="Enter text or URL for QR code" 
+                                           style="width: 100%; padding: 10px; margin-bottom: 10px;">
+                                    <textarea id="qrPrompt" placeholder="Describe artistic style for QR code" 
+                                              rows="3" style="width: 100%; padding: 10px; margin-bottom: 20px;"></textarea>
+                                    <button onclick="window.creativeStudio.generateQRCode()" 
+                                            style="padding: 10px 20px; background: var(--accent-primary); color: white; border: none; border-radius: 6px; cursor: pointer;">
+                                        Generate Artistic QR Code
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                        break;
+                        
+                    case 'faceswap':
+                        preview.innerHTML = `
+                            <div class="tool-interface" style="padding: 40px; text-align: center;">
+                                <h3>Face Swap</h3>
+                                <p>Upload two images to swap faces between them</p>
+                                <div style="margin: 20px 0;">
+                                    <input type="file" id="faceImage1" accept="image/*" style="margin: 10px;">
+                                    <input type="file" id="faceImage2" accept="image/*" style="margin: 10px;">
+                                    <button onclick="window.creativeStudio.swapFaces()" 
+                                            style="padding: 10px 20px; background: var(--accent-primary); color: white; border: none; border-radius: 6px; cursor: pointer; margin-top: 20px;">
+                                        Swap Faces
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                        break;
+                        
+                    case 'segment':
+                        preview.innerHTML = `
+                            <div class="tool-interface" style="padding: 40px; text-align: center;">
+                                <h3>Segment Anything</h3>
+                                <p>Upload an image to segment objects</p>
+                                <div style="margin: 20px 0;">
+                                    <input type="file" id="segmentImage" accept="image/*" style="margin: 10px;">
+                                    <button onclick="window.creativeStudio.segmentImage()" 
+                                            style="padding: 10px 20px; background: var(--accent-primary); color: white; border: none; border-radius: 6px; cursor: pointer; margin-top: 20px;">
+                                        Segment Image
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                        break;
+                        
+                    case 'word2img':
+                        preview.innerHTML = `
+                            <div class="tool-interface" style="padding: 40px; text-align: center;">
+                                <h3>Word to Image</h3>
+                                <div style="margin: 20px 0;">
+                                    <input type="text" id="wordText" placeholder="Enter text to stylize" 
+                                           style="width: 100%; padding: 10px; margin-bottom: 10px;">
+                                    <textarea id="wordPrompt" placeholder="Describe the style and appearance" 
+                                              rows="3" style="width: 100%; padding: 10px; margin-bottom: 20px;"></textarea>
+                                    <button onclick="window.creativeStudio.generateWordArt()" 
+                                            style="padding: 10px 20px; background: var(--accent-primary); color: white; border: none; border-radius: 6px; cursor: pointer;">
+                                        Generate Word Art
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                        break;
+                }
+                
+                this.showNotification(`📱 ${toolType.toUpperCase()} tool opened`, 'info');
+            }
+
+            async generateQRCode() {
+                const text = document.getElementById('qrText').value;
+                const prompt = document.getElementById('qrPrompt').value;
+                
+                if (!text || !prompt) {
+                    alert('Please enter both QR text and style description');
+                    return;
+                }
+
+                // Implement QR code generation
+                this.showNotification('🎨 QR Code generation coming soon!', 'info');
+            }
+
+            async swapFaces() {
+                // Implement face swap
+                this.showNotification('🔄 Face Swap coming soon!', 'info');
+            }
+
+            async segmentImage() {
+                // Implement image segmentation
+                this.showNotification('✂️ Image Segmentation coming soon!', 'info');
+            }
+
+            async generateWordArt() {
+                // Implement word to image
+                this.showNotification('🔤 Word Art generation coming soon!', 'info');
+            }
+
+            switchPanelTab(tab) {
+                // No tab switching needed - only one panel
+            }
+
+            applyStylePreset(style) {
+                const currentMode = document.querySelector('.mode-tab.active').id.replace('ModeBtn', '');
+                const promptField = currentMode === 'imageGen' ? 
+                    document.getElementById('imagePrompt') : 
+                    document.getElementById('videoPrompt');
+
+                // Add style modifier to prompt
+                const currentPrompt = promptField.value;
+                const styleModifiers = {
+                    photorealistic: ', photorealistic, high quality, detailed',
+                    artistic: ', artistic style, creative, expressive',
+                    anime: ', anime style, manga, cel-shaded',
+                    cartoon: ', cartoon style, colorful, stylized',
+                    abstract: ', abstract art, geometric, modern',
+                    cinematic: ', cinematic lighting, dramatic, movie-like'
+                };
+
+                if (styleModifiers[style]) {
+                    // Remove existing style modifiers
+                    let cleanPrompt = currentPrompt;
+                    Object.values(styleModifiers).forEach(modifier => {
+                        cleanPrompt = cleanPrompt.replace(modifier, '');
+                    });
+
+                    promptField.value = cleanPrompt + styleModifiers[style];
+                }
+            }
+
+            async generateImage() {
+                const prompt = document.getElementById('imagePrompt').value;
+                if (!prompt.trim()) {
+                    alert('Please enter a prompt for image generation');
+                    return;
+                }
+
+                const btn = document.getElementById('generateImageBtn');
+                const progress = document.getElementById('imageProgress');
+                const preview = document.getElementById('imagePreview');
+
+                // Show loading state
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+                progress.style.display = 'block';
+
+                try {
+                    // Initialize Segmind service if not already done
+                    if (!this.segmindService) {
+                        this.segmindService = new SegmindService();
+                    }
+
+                    // Get settings from UI
+                    const width = parseInt(document.getElementById('canvasWidth').value) || 1024;
+                    const height = parseInt(document.getElementById('canvasHeight').value) || 1024;
+                    const quality = 'high'; // Default to high quality
+                    const creativity = parseInt(document.getElementById('creativitySlider').value) || 50;
+                    const detailLevel = parseInt(document.getElementById('detailSlider').value) || 70;
+                    const negativePrompt = document.getElementById('negativePrompts').value || '';
+                    
+                    // Get active style preset
+                    const activeStylePreset = document.querySelector('.style-preset.active');
+                    const style = activeStylePreset ? activeStylePreset.dataset.style : 'photorealistic';
+
+                    // Get selected model from dropdown
+                    const model = document.getElementById('modelSelector').value;
+
+                    console.log('🎨 Generating image with Segmind...', {
+                        model,
+                        style,
+                        dimensions: `${width}x${height}`,
+                        quality
+                    });
+
+                    // Generate image with Segmind API
+                    const result = await this.segmindService.generateImage({
+                        prompt: prompt,
+                        model: model,
+                        style: style,
+                        width: width,
+                        height: height,
+                        quality: quality,
+                        creativity: creativity,
+                        detailLevel: detailLevel,
+                        negativePrompt: negativePrompt
+                    });
+
+                    if (result.success && result.imageUrl) {
+                        // Show generated image
+                        preview.innerHTML = `
+                            <img src="${result.imageUrl}" 
+                                 class="generated-content" alt="Generated Image"
+                                 style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                            <div class="content-actions">
+                                <button class="action-btn" title="Download" onclick="window.creativeStudio.downloadImage('${result.imageUrl}', '${result.seed}')">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <button class="action-btn" title="Use in Editor" onclick="window.creativeStudio.useImageInEditor('${result.imageUrl}')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="action-btn" title="Regenerate" onclick="window.creativeStudio.regenerateImage('${prompt}', '${model}')">
+                                    <i class="fas fa-sync"></i>
+                                </button>
+                            </div>
+                        `;
+
+                        // Store generation data for potential regeneration
+                        this.lastGeneration = {
+                            prompt: result.prompt,
+                            model: result.model,
+                            seed: result.seed,
+                            parameters: result.parameters
+                        };
+
+                        // Show success notification
+                        this.showNotification('✅ Image generated successfully!', 'success');
+                        console.log('✅ Image generated successfully:', result);
+
+                    } else {
+                        throw new Error('No image URL returned from Segmind API');
+                    }
+
+                } catch (error) {
+                    console.error('❌ Segmind image generation failed:', error);
+                    
+                    // Show error in preview area
+                    preview.innerHTML = `
+                        <div class="preview-placeholder">
+                            <i class="fas fa-exclamation-triangle" style="color: var(--danger-color);"></i>
+                            <h3>Generation Failed</h3>
+                            <p>${error.message}</p>
+                            <button onclick="window.creativeStudio.generateImage()" 
+                                    style="margin-top: 15px; padding: 8px 16px; background: var(--accent-primary); border: none; border-radius: 4px; color: white; cursor: pointer;">
+                                Try Again
+                            </button>
+                        </div>
+                    `;
+                    
+                    this.showNotification(`❌ Generation failed: ${error.message}`, 'error');
+                } finally {
+                    // Reset button state
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-magic"></i> Generate Image';
+                    progress.style.display = 'none';
+                }
+            }
+
+            async generateVideo() {
+                const prompt = document.getElementById('videoPrompt').value;
+                if (!prompt.trim()) {
+                    alert('Please enter a prompt for video generation');
+                    return;
+                }
+
+                const btn = document.getElementById('generateVideoBtn');
+                const progress = document.getElementById('videoProgress');
+                const preview = document.getElementById('videoPreview');
+
+                // Show loading state
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+                progress.style.display = 'block';
+
+                try {
+                    // Simulate AI video generation (replace with actual video generation API)
+                    await this.simulateGeneration(5000); // Longer for video
+
+                    // Show generated video (placeholder)
+                    preview.innerHTML = `
+                        <video class="generated-content" controls>
+                            <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <div class="content-actions">
+                            <button class="action-btn" title="Download">
+                                <i class="fas fa-download"></i>
+                            </button>
+                            <button class="action-btn" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="action-btn" title="Regenerate">
+                                <i class="fas fa-sync"></i>
+                            </button>
+                        </div>
+                    `;
+
+                    console.log('Video generated:', prompt);
+
+                } catch (error) {
+                    console.error('Video generation failed:', error);
+                    alert('Video generation failed. Please try again.');
+                } finally {
+                    // Reset button state
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-magic"></i> Generate Video';
+                    progress.style.display = 'none';
+                }
+            }
+
+            // Helper functions for image actions
+            downloadImage(imageUrl, seed) {
+                const link = document.createElement('a');
+                link.href = imageUrl;
+                link.download = `ai-generated-image-${seed || Date.now()}.png`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                this.showNotification('📥 Image download started', 'info');
+            }
+
+            useImageInEditor(imageUrl) {
+                // Switch to editor mode and attempt to add image
+                this.switchMode('editor');
+                
+                // Try to add image to motionity editor
+                try {
+                    const editorWindow = this.editor.contentWindow;
+                    if (editorWindow && editorWindow.addImageFromUrl) {
+                        editorWindow.addImageFromUrl(imageUrl);
+                        this.showNotification('✅ Image added to editor', 'success');
+                    } else {
+                        // Fallback: copy URL to clipboard
+                        navigator.clipboard.writeText(imageUrl).then(() => {
+                            this.showNotification('📋 Image URL copied to clipboard', 'info');
+                        });
+                    }
+                } catch (error) {
+                    console.warn('Could not add image to editor:', error);
+                    // Copy URL as fallback
+                    navigator.clipboard.writeText(imageUrl).then(() => {
+                        this.showNotification('📋 Image URL copied to clipboard', 'info');
+                    });
+                }
+            }
+
+            async regenerateImage(prompt, model) {
+                // Set the prompt and regenerate
+                document.getElementById('imagePrompt').value = prompt;
+                await this.generateImage();
+            }
+
+            showNotification(message, type = 'info') {
+                const notification = document.createElement('div');
+                const colors = {
+                    success: '#28a745',
+                    error: '#dc3545', 
+                    warning: '#ffc107',
+                    info: '#17a2b8'
+                };
+                
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 80px;
+                    right: 20px;
+                    background: ${colors[type] || colors.info};
+                    color: white;
+                    padding: 12px 20px;
+                    border-radius: 6px;
+                    z-index: 10004;
+                    font-size: 14px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                    animation: slideInRight 0.3s ease-out;
+                `;
+                
+                notification.innerHTML = message;
+                document.body.appendChild(notification);
+                
+                // Auto remove after 4 seconds
+                setTimeout(() => {
+                    notification.style.animation = 'slideOutRight 0.3s ease-out';
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.parentNode.removeChild(notification);
+                        }
+                    }, 300);
+                }, 4000);
+            }
+
+            simulateGeneration(duration = 3000) {
+                return new Promise(resolve => {
+                    setTimeout(resolve, duration);
+                });
+            }
+
+            setupMotionityEditor() {
+                console.log('🔧 setupMotionityEditor called - starting Motionity editor setup...');
+                
+                // Load Motionity editor after a delay to show loading state
+                setTimeout(() => {
+                    console.log('⏱️ Timer expired, attempting to load Motionity editor...');
+                    
+                    const loading = document.getElementById('editorLoading');
+                    const editor = document.getElementById('motionityEditor');
+                    
+                    console.log('📍 Loading element:', loading);
+                    console.log('📍 Editor iframe element:', editor);
+                    
+                    if (!loading || !editor) {
+                        console.error('❌ Required elements not found!', { loading, editor });
+                        return;
+                    }
+                    
+                    // Load LOCAL Motionity editor
+                    console.log('🌐 Loading LOCAL Motionity editor from creative studio folder...');
+                    editor.src = 'creative studio/motionity-main/src/index.html';
+                    editor.style.display = 'block';
+                    loading.style.display = 'none';
+                    
+                    console.log('✅ Motionity editor loaded and loading screen hidden');
+                }, 2000);
+            }
+
+            openStudio() {
+                this.modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                console.log('🎨 Creative Studio opened');
+            }
+
+            closeStudio() {
+                this.modal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+                console.log('🎨 Creative Studio closed');
+            }
+
+            toggleMinimize() {
+                // Minimize functionality
+                console.log('🔽 Studio minimized');
+            }
+
+            toggleMaximize() {
+                // Maximize functionality
+                console.log('🔼 Studio maximized');
+            }
+
+            createNewProject() {
+                if (this.currentMode === 'editor') {
+                    // Reset editor
+                    const editor = document.getElementById('motionityEditor');
+                    if (editor.contentWindow && editor.contentWindow.newProject) {
+                        editor.contentWindow.newProject();
+                    }
+                } else {
+                    // Clear generator content
+                    const preview = this.currentMode === 'imageGen' ? 
+                        document.getElementById('imagePreview') : 
+                        document.getElementById('videoPreview');
+                    
+                    preview.innerHTML = `
+                        <div class="preview-placeholder">
+                            <i class="fas fa-${this.currentMode === 'imageGen' ? 'image' : 'video'}"></i>
+                            <h3>AI ${this.currentMode === 'imageGen' ? 'Image' : 'Video'} Generator</h3>
+                            <p>${this.currentMode === 'imageGen' ? 'Enter a prompt to generate stunning images with AI' : 'Create dynamic videos from text descriptions'}</p>
+                        </div>
+                    `;
+                }
+                
+                this.showNotification('✨ New project created', 'success');
+                console.log('🆕 New project created');
+            }
+
+            toggleAIPanel() {
+                this.aiPanel.classList.toggle('active');
+                console.log('🤖 AI panel toggled');
+            }
+
+            exportProject() {
+                if (this.currentMode === 'editor') {
+                    // Export from editor
+                    const editor = document.getElementById('motionityEditor');
+                    if (editor.contentWindow && editor.contentWindow.exportProject) {
+                        editor.contentWindow.exportProject();
+                    } else {
+                        this.showNotification('📤 Export feature coming soon for editor', 'info');
+                    }
+                } else {
+                    // Export generated content
+                    if (this.lastGeneration && this.lastGeneration.imageUrl) {
+                        this.downloadImage(this.lastGeneration.imageUrl, this.lastGeneration.seed);
+                    } else {
+                        this.showNotification('⚠️ No content to export', 'warning');
+                    }
+                }
+                
+                console.log('📤 Project exported');
+            }
+
+            handleAIFeature(feature) {
+                switch (feature) {
+                    case 'auto-animate':
+                        this.showNotification('🎬 Auto Animate feature coming soon!', 'info');
+                        break;
+                    case 'smart-transitions':
+                        this.showNotification('✨ Smart Transitions feature coming soon!', 'info');
+                        break;
+                    case 'color-palette':
+                        this.showNotification('🎨 AI Color Palette feature coming soon!', 'info');
+                        break;
+                    case 'voiceover':
+                        this.showNotification('🎙️ AI Voiceover feature coming soon!', 'info');
+                        break;
+                    case 'script-generator':
+                        this.showNotification('📝 Script Generator feature coming soon!', 'info');
+                        break;
+                    default:
+                        console.log('Unknown AI feature:', feature);
+                }
+                
+                console.log('🤖 AI feature activated:', feature);
+            }
+        }
+
+        // Initialize Creative Studio immediately (since this script is loaded dynamically)
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                window.creativeStudio = new CreativeStudio();
+                console.log('✅ Creative Studio initialized');
+            });
+        } else {
+            // DOM is already loaded, initialize immediately
+            window.creativeStudio = new CreativeStudio();
+            console.log('✅ Creative Studio initialized');
+        }
+    </script>
+</body>
+</html>
