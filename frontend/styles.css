@@ -1524,8 +1524,8 @@ body {
 }
 
 .video-meeting-container {
-  width: 95%;
-  height: 95%;
+  width: 90%;
+  height: 88%;
   background: var(--bg-primary);
   border-radius: 16px;
   border: 1px solid var(--border-color);
@@ -1610,10 +1610,99 @@ body {
   width: 100%;
   height: 100%;
   background: #1a1a1a;
+  display: flex;
+  flex-direction: column;
 }
 
 .videosdk-container iframe {
   width: 100%;
   height: 100%;
   border: none;
+  flex: 1;
+}
+
+/* AI Agent Controls */
+.meeting-controls {
+  padding: 16px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ai-agent-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.ai-agent-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--accent-primary);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ai-agent-btn:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+}
+
+.ai-agent-btn i {
+  font-size: 16px;
+}
+
+.ai-agent-btn.test-btn {
+  background: #f59e0b;
+}
+
+.ai-agent-btn.test-btn:hover {
+  background: #d97706;
+}
+
+.agent-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.status-indicator.online {
+  background: var(--success-color);
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+}
+
+.status-indicator.offline {
+  background: var(--text-tertiary);
+}
+
+.status-indicator.connecting {
+  background: #f59e0b;
+  animation: pulse 1.5s infinite;
+}
+
+.status-indicator.error {
+  background: var(--danger-color);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
 }

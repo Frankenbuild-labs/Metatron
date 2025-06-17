@@ -401,6 +401,18 @@
             <span class="material-icons"> chat </span>
           </button>
           <span class="vertical-line"></span>
+          <!--AI Agent Controls-->
+          <button type="button" id="startAIAgent" class="btn btn-outline-light ms-1" onclick="startAIAgent()" title="Summon AI Agent">
+            🤖
+          </button>
+          <button type="button" id="testAgent" class="btn btn-outline-success ms-1" onclick="testAIAgent()" style="display: none;" title="Test Agent">
+            🧪
+          </button>
+          <button type="button" id="removeAIAgent" class="btn btn-outline-danger ms-1" onclick="removeAIAgent()" style="display: none;" title="Remove AI Agent">
+            ❌
+          </button>
+          <span id="aiAgentStatus" style="color: #888; font-size: 12px; margin-left: 8px;">AI Agent Inactive</span>
+          <span class="vertical-line"></span>
           <!--call end-->
           <div class="btn-group">
             <button type="button" class="btn btn-danger dropdown-toggle ms-1" data-toggle="dropdown"

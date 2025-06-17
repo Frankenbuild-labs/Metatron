@@ -602,18 +602,40 @@ function loadVideoSDK() {
         </div>
     `;
 
-    // Load VideoSDK interface in an iframe
+    // Load VideoSDK interface with AI agent controls
     setTimeout(() => {
         content.innerHTML = `
             <div class="videosdk-container">
+                <div class="meeting-controls">
+                    <div class="ai-agent-controls">
+                        <button id="addAiAgentBtn" class="ai-agent-btn">
+                            <i class="fas fa-robot"></i>
+                            Add AI Agent
+                        </button>
+                        <button id="removeAiAgentBtn" class="ai-agent-btn" style="display: none;">
+                            <i class="fas fa-robot"></i>
+                            Remove AI Agent
+                        </button>
+                        <button id="testAiAgentBtn" class="ai-agent-btn test-btn" style="display: none;">
+                            <i class="fas fa-microphone"></i>
+                            Test Agent
+                        </button>
+                        <div class="agent-status" id="agentStatus">
+                            <span class="status-indicator offline"></span>
+                            <span class="status-text">AI Agent Offline</span>
+                        </div>
+                    </div>
+                </div>
                 <iframe
                     src="videosdk/index.html"
                     allow="camera; microphone; fullscreen; display-capture"
-                    sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-modals allow-downloads"
                     loading="lazy">
                 </iframe>
             </div>
         `;
+
+        // Initialize AI agent controls
+        initializeAiAgentControls();
     }, 1000);
 }
 
@@ -633,4 +655,408 @@ function initializeVideoMeeting() {
             }
         });
     }
+}
+
+// AI Agent Control Functions
+function initializeAiAgentControls() {
+    const addBtn = document.getElementById('addAiAgentBtn');
+    const removeBtn = document.getElementById('removeAiAgentBtn');
+    const testBtn = document.getElementById('testAiAgentBtn');
+
+    if (addBtn) {
+        addBtn.addEventListener('click', showAiAgentConfig);
+    }
+
+    if (removeBtn) {
+        removeBtn.addEventListener('click', removeAiAgent);
+    }
+
+    if (testBtn) {
+        testBtn.addEventListener('click', testAiAgent);
+    }
+
+    // Check agent service status
+    checkAgentServiceStatus();
+}
+
+function showAiAgentConfig() {
+    // Create configuration modal
+    const configModal = document.createElement('div');
+    configModal.className = 'ai-agent-config-modal';
+    configModal.innerHTML = `
+        <div class="config-modal-content">
+            <div class="config-modal-header">
+                <h3><i class="fas fa-robot"></i> Configure AI Agent</h3>
+                <button class="close-config-btn" onclick="closeAiAgentConfig()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="config-modal-body">
+                <div class="config-section">
+                    <label>Agent Voice:</label>
+                    <select id="agentVoiceSelect">
+                        <option value="Leda">Leda (Default)</option>
+                        <option value="Charon">Charon</option>
+                        <option value="Kore">Kore</option>
+                        <option value="Fenrir">Fenrir</option>
+                    </select>
+                </div>
+                <div class="config-section">
+                    <label>Agent Instructions:</label>
+                    <textarea id="agentInstructions" placeholder="Custom instructions for the AI agent...">You are Metatron's AI Assistant in a video meeting. Be helpful, professional, and concise in your responses.</textarea>
+                </div>
+                <div class="config-section">
+                    <label>Meeting ID:</label>
+                    <input type="text" id="meetingIdInput" placeholder="Enter meeting ID or leave blank for auto-generated">
+                </div>
+            </div>
+            <div class="config-modal-footer">
+                <button class="cancel-btn" onclick="closeAiAgentConfig()">Cancel</button>
+                <button class="start-agent-btn" onclick="startAiAgent()">Start AI Agent</button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(configModal);
+
+    // Add styles for the modal
+    if (!document.getElementById('aiAgentModalStyles')) {
+        const styles = document.createElement('style');
+        styles.id = 'aiAgentModalStyles';
+        styles.textContent = `
+            .ai-agent-config-modal {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.7);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 10000;
+            }
+            .config-modal-content {
+                background: var(--bg-secondary);
+                border-radius: 12px;
+                width: 90%;
+                max-width: 500px;
+                max-height: 80vh;
+                overflow-y: auto;
+            }
+            .config-modal-header {
+                padding: 20px;
+                border-bottom: 1px solid var(--border-color);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .config-modal-header h3 {
+                margin: 0;
+                color: var(--text-primary);
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+            .close-config-btn {
+                background: none;
+                border: none;
+                color: var(--text-secondary);
+                cursor: pointer;
+                padding: 8px;
+                border-radius: 4px;
+            }
+            .close-config-btn:hover {
+                background: var(--bg-tertiary);
+                color: var(--text-primary);
+            }
+            .config-modal-body {
+                padding: 20px;
+            }
+            .config-section {
+                margin-bottom: 20px;
+            }
+            .config-section label {
+                display: block;
+                margin-bottom: 8px;
+                color: var(--text-primary);
+                font-weight: 500;
+            }
+            .config-section select,
+            .config-section input,
+            .config-section textarea {
+                width: 100%;
+                padding: 12px;
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                background: var(--bg-primary);
+                color: var(--text-primary);
+                font-size: 14px;
+            }
+            .config-section textarea {
+                min-height: 80px;
+                resize: vertical;
+            }
+            .config-modal-footer {
+                padding: 20px;
+                border-top: 1px solid var(--border-color);
+                display: flex;
+                gap: 12px;
+                justify-content: flex-end;
+            }
+            .cancel-btn, .start-agent-btn {
+                padding: 12px 24px;
+                border: none;
+                border-radius: 8px;
+                cursor: pointer;
+                font-weight: 500;
+            }
+            .cancel-btn {
+                background: var(--bg-tertiary);
+                color: var(--text-primary);
+            }
+            .start-agent-btn {
+                background: var(--accent-primary);
+                color: white;
+            }
+            .cancel-btn:hover {
+                background: var(--bg-quaternary);
+            }
+            .start-agent-btn:hover {
+                background: var(--accent-secondary);
+            }
+        `;
+        document.head.appendChild(styles);
+    }
+}
+
+function closeAiAgentConfig() {
+    const modal = document.querySelector('.ai-agent-config-modal');
+    if (modal) {
+        modal.remove();
+    }
+}
+
+async function startAiAgent() {
+    const voice = document.getElementById('agentVoiceSelect').value;
+    const instructions = document.getElementById('agentInstructions').value;
+    let meetingId = document.getElementById('meetingIdInput').value;
+
+    // Try to get meeting ID from VideoSDK iframe if not provided
+    if (!meetingId) {
+        try {
+            const iframe = document.querySelector('.videosdk-container iframe');
+            if (iframe && iframe.contentWindow) {
+                // Try to get meeting ID from VideoSDK
+                meetingId = 'metatron-meeting-' + Date.now();
+            } else {
+                meetingId = 'metatron-meeting-' + Date.now();
+            }
+        } catch (e) {
+            meetingId = 'metatron-meeting-' + Date.now();
+        }
+    }
+
+    try {
+        // Update UI to show starting
+        updateAgentStatus('connecting', 'Starting AI Agent...');
+
+        // Get VideoSDK token from environment or generate one
+        const videosdk_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlrZXkiOiJmYWZjY2Y3ZS0wMTQxLTQ3MzktYWMxYy0zNTNhYjY0YThhZTMiLCJwZXJtaXNzaW9ucyI6WyJhbGxvd19qb2luIiwiYWxsb3dfbW9kIiwiYXNrX2pvaW4iXSwiaWF0IjoxNzUwMTE0MDAxLCJleHAiOjE3NTAyMDA0MDF9.AxmthJlFMt_82hk-9hL7qo_6LRo2GqYu8cJ-gV_l3cg';
+
+        const response = await fetch('http://localhost:5003/agent/start', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                meetingId: meetingId,
+                participantId: 'metatron-ai-agent-' + Date.now(),
+                voice: voice,
+                instructions: instructions,
+                token: videosdk_token,
+                apiBase: 'https://api.videosdk.live'
+            })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            updateAgentStatus('online', 'AI Agent Active');
+            showAgentControls(true);
+            closeAiAgentConfig();
+
+            // Show success message with meeting ID
+            showNotification(`AI Agent started in meeting: ${meetingId}`, 'success');
+        } else {
+            updateAgentStatus('offline', 'AI Agent Offline');
+            showNotification('Failed to start AI Agent: ' + result.message, 'error');
+        }
+
+    } catch (error) {
+        console.error('Error starting AI agent:', error);
+        updateAgentStatus('offline', 'AI Agent Offline');
+        showNotification('Error connecting to AI Agent service', 'error');
+    }
+}
+
+async function removeAiAgent() {
+    try {
+        updateAgentStatus('connecting', 'Stopping AI Agent...');
+
+        const response = await fetch('http://localhost:5003/agent/stop', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+
+        if (result.success) {
+            updateAgentStatus('offline', 'AI Agent Offline');
+            showAgentControls(false);
+            showNotification('AI Agent stopped successfully!', 'success');
+        } else {
+            updateAgentStatus('offline', 'AI Agent Offline');
+            showAgentControls(false);
+            showNotification('AI Agent stopped (service response: ' + result.message + ')', 'info');
+        }
+
+    } catch (error) {
+        console.error('Error stopping AI agent:', error);
+        updateAgentStatus('offline', 'AI Agent Offline');
+        showAgentControls(false);
+        showNotification('AI Agent stopped (connection error)', 'info');
+    }
+}
+
+function updateAgentStatus(status, text) {
+    const statusIndicator = document.querySelector('.status-indicator');
+    const statusText = document.querySelector('.status-text');
+
+    if (statusIndicator && statusText) {
+        statusIndicator.className = `status-indicator ${status}`;
+        statusText.textContent = text;
+    }
+}
+
+function showAgentControls(agentActive) {
+    const addBtn = document.getElementById('addAiAgentBtn');
+    const removeBtn = document.getElementById('removeAiAgentBtn');
+    const testBtn = document.getElementById('testAiAgentBtn');
+
+    if (addBtn && removeBtn && testBtn) {
+        if (agentActive) {
+            addBtn.style.display = 'none';
+            removeBtn.style.display = 'inline-flex';
+            testBtn.style.display = 'inline-flex';
+        } else {
+            addBtn.style.display = 'inline-flex';
+            removeBtn.style.display = 'none';
+            testBtn.style.display = 'none';
+        }
+    }
+}
+
+async function testAiAgent() {
+    try {
+        const response = await fetch('http://localhost:5003/agent/test', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                message: 'Hello AI Agent, can you hear me? Please respond to confirm you are working.'
+            })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            showNotification('✅ Agent Test: ' + result.agent_response, 'success');
+        } else {
+            showNotification('❌ Agent Test Failed: ' + result.message, 'error');
+        }
+
+    } catch (error) {
+        console.error('Error testing AI agent:', error);
+        showNotification('❌ Agent Test Error: Connection failed', 'error');
+    }
+}
+
+async function checkAgentServiceStatus() {
+    try {
+        const response = await fetch('http://localhost:5003/health');
+        const result = await response.json();
+
+        if (result.status === 'healthy') {
+            if (result.agent_running) {
+                updateAgentStatus('online', 'AI Agent Active');
+                showAgentControls(true);
+            } else {
+                updateAgentStatus('offline', 'AI Agent Offline');
+                showAgentControls(false);
+            }
+        }
+    } catch (error) {
+        console.error('Agent service not available:', error);
+        updateAgentStatus('error', 'Service Unavailable');
+    }
+}
+
+function showNotification(message, type = 'info') {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.innerHTML = `
+        <div class="notification-content">
+            <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
+            <span>${message}</span>
+        </div>
+    `;
+
+    // Add notification styles if not already added
+    if (!document.getElementById('notificationStyles')) {
+        const styles = document.createElement('style');
+        styles.id = 'notificationStyles';
+        styles.textContent = `
+            .notification {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 16px 20px;
+                border-radius: 8px;
+                color: white;
+                font-weight: 500;
+                z-index: 10001;
+                animation: slideIn 0.3s ease-out;
+            }
+            .notification.success { background: #10b981; }
+            .notification.error { background: #ef4444; }
+            .notification.info { background: #3b82f6; }
+            .notification-content {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(styles);
+    }
+
+    document.body.appendChild(notification);
+
+    // Remove notification after 4 seconds
+    setTimeout(() => {
+        notification.style.animation = 'slideIn 0.3s ease-out reverse';
+        setTimeout(() => notification.remove(), 300);
+    }, 4000);
 }

@@ -1,0 +1,22 @@
+# VideoSDK AI Agent Dependencies
+# Core VideoSDK AI Agent framework
+videosdk-agents
+
+# Google Gemini plugin for VideoSDK
+videosdk-plugins-google
+
+# Model Context Protocol support
+fastmcp
+
+# HTTP client for external APIs
+aiohttp
+
+# Additional dependencies for Flask server
+flask
+flask-cors
+
+# Environment variable management
+python-dotenv
+
+# Process management
+psutil

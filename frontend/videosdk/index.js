@@ -1300,3 +1300,355 @@ function toggleControls() {
     videoCamOff.style.display = "inline-block";
   }
 }
+
+// AI Agent functionality
+let aiAgentActive = false;
+let aiAgentSocket = null;
+let aiAgentParticipantId = 'ai-agent-metatron';
+
+function createAIAgentParticipant() {
+  // Create AI agent video element (will show robot icon)
+  let aiVideoElement = createVideoElement(aiAgentParticipantId);
+  aiVideoElement.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+  aiVideoElement.style.display = 'flex';
+  aiVideoElement.style.alignItems = 'center';
+  aiVideoElement.style.justifyContent = 'center';
+  aiVideoElement.innerHTML = `
+    <div style="text-align: center; color: white;">
+      <div style="font-size: 48px; margin-bottom: 8px;">🤖</div>
+      <div style="font-size: 14px; font-weight: 500;">Metatron AI</div>
+      <div style="font-size: 12px; opacity: 0.8;">Assistant</div>
+    </div>
+  `;
+
+  // Add to video container
+  videoContainer.appendChild(aiVideoElement);
+
+  // Add to participants list
+  addParticipantToList({
+    id: aiAgentParticipantId,
+    displayName: "Metatron AI Assistant"
+  });
+
+  totalParticipants++;
+  console.log('AI Agent participant created');
+}
+
+function removeAIAgentParticipant() {
+  // Remove video element
+  let aiVideoElement = document.getElementById(`v-${aiAgentParticipantId}`);
+  if (aiVideoElement) {
+    aiVideoElement.parentNode.removeChild(aiVideoElement);
+  }
+
+  // Remove from participants list
+  let participantListItem = document.getElementById(`p-${aiAgentParticipantId}`);
+  if (participantListItem) {
+    participantListItem.remove();
+  }
+
+  totalParticipants--;
+  console.log('AI Agent participant removed');
+}
+
+function startAIAgent() {
+  if (aiAgentActive) {
+    console.log('AI Agent already active');
+    return;
+  }
+
+  // Show loading state
+  const startBtn = document.getElementById('startAIAgent');
+  const testBtn = document.getElementById('testAgent');
+  const removeBtn = document.getElementById('removeAIAgent');
+  const statusIndicator = document.getElementById('aiAgentStatus');
+
+  startBtn.textContent = 'Connecting...';
+  startBtn.disabled = true;
+
+  // Connect to AI agent
+  aiAgentSocket = new WebSocket('ws://localhost:8080');
+
+  aiAgentSocket.onopen = function(event) {
+    console.log('Connected to AI Agent');
+    aiAgentActive = true;
+
+    // Create AI agent participant
+    createAIAgentParticipant();
+
+    // Update UI
+    startBtn.style.display = 'none';
+    testBtn.style.display = 'inline-block';
+    removeBtn.style.display = 'inline-block';
+    statusIndicator.textContent = 'AI Agent Active';
+    statusIndicator.style.color = '#4CAF50';
+
+    // Send initial connection message
+    aiAgentSocket.send(JSON.stringify({
+      type: 'join_meeting',
+      meetingId: meetingCode,
+      participantName: "Metatron's AI Assistant"
+    }));
+  };
+
+  aiAgentSocket.onmessage = function(event) {
+    const data = JSON.parse(event.data);
+    console.log('AI Agent message:', data);
+
+    if (data.type === 'audio_response') {
+      // Handle AI audio response
+      playAIResponse(data.audio);
+    } else if (data.type === 'text_response') {
+      // Handle AI text response in chat
+      displayAIMessage(data.message);
+    }
+  };
+
+  aiAgentSocket.onerror = function(error) {
+    console.error('AI Agent error:', error);
+    resetAIAgentUI();
+  };
+
+  aiAgentSocket.onclose = function(event) {
+    console.log('AI Agent disconnected');
+    aiAgentActive = false;
+    removeAIAgentParticipant();
+    resetAIAgentUI();
+  };
+}
+
+function testAIAgent() {
+  if (!aiAgentActive || !aiAgentSocket) {
+    console.log('AI Agent not active');
+    return;
+  }
+
+  // Send test message
+  aiAgentSocket.send(JSON.stringify({
+    type: 'test',
+    message: 'Hello AI Agent, can you hear me? Please respond to confirm you are working.'
+  }));
+
+  console.log('Test message sent to AI Agent');
+}
+
+function removeAIAgent() {
+  if (aiAgentSocket) {
+    aiAgentSocket.close();
+  }
+
+  aiAgentActive = false;
+  removeAIAgentParticipant();
+  resetAIAgentUI();
+}
+
+function resetAIAgentUI() {
+  const startBtn = document.getElementById('startAIAgent');
+  const testBtn = document.getElementById('testAgent');
+  const removeBtn = document.getElementById('removeAIAgent');
+  const statusIndicator = document.getElementById('aiAgentStatus');
+
+  startBtn.style.display = 'inline-block';
+  startBtn.textContent = '🤖';
+  startBtn.disabled = false;
+  testBtn.style.display = 'none';
+  removeBtn.style.display = 'none';
+  statusIndicator.textContent = 'AI Agent Inactive';
+  statusIndicator.style.color = '#888';
+}
+
+function displayAIMessage(message) {
+  const chatBox = document.getElementById("chatArea");
+  const chatTemplate = `
+    <div style="margin-bottom: 10px;">
+      <span style="font-size:12px;">Metatron AI Assistant</span>
+      <div style="margin-top:5px">
+        <span style="background:#4CAF50;color:white;padding:5px;border-radius:8px">${message}</span>
+      </div>
+    </div>
+  `;
+  chatBox.insertAdjacentHTML("beforeend", chatTemplate);
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function playAIResponse(audioData) {
+  // Handle AI audio response
+  console.log('Playing AI audio response');
+  // Implementation for playing audio would go here
+}
+
+// AI Agent functionality
+let aiAgentActive = false;
+let aiAgentSocket = null;
+let aiAgentParticipantId = 'ai-agent-metatron';
+
+function createAIAgentParticipant() {
+  // Create AI agent video element (will show robot icon)
+  let aiVideoElement = createVideoElement(aiAgentParticipantId);
+  aiVideoElement.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+  aiVideoElement.style.display = 'flex';
+  aiVideoElement.style.alignItems = 'center';
+  aiVideoElement.style.justifyContent = 'center';
+  aiVideoElement.innerHTML = `
+    <div style="text-align: center; color: white;">
+      <div style="font-size: 48px; margin-bottom: 8px;">🤖</div>
+      <div style="font-size: 14px; font-weight: 500;">Metatron AI</div>
+      <div style="font-size: 12px; opacity: 0.8;">Assistant</div>
+    </div>
+  `;
+
+  // Add to video container
+  videoContainer.appendChild(aiVideoElement);
+
+  // Add to participants list
+  addParticipantToList({
+    id: aiAgentParticipantId,
+    displayName: "Metatron AI Assistant"
+  });
+
+  totalParticipants++;
+  console.log('AI Agent participant created');
+}
+
+function removeAIAgentParticipant() {
+  // Remove video element
+  let aiVideoElement = document.getElementById(`v-${aiAgentParticipantId}`);
+  if (aiVideoElement) {
+    aiVideoElement.parentNode.removeChild(aiVideoElement);
+  }
+
+  // Remove from participants list
+  let participantListItem = document.getElementById(`p-${aiAgentParticipantId}`);
+  if (participantListItem) {
+    participantListItem.remove();
+  }
+
+  totalParticipants--;
+  console.log('AI Agent participant removed');
+}
+
+function startAIAgent() {
+  if (aiAgentActive) {
+    console.log('AI Agent already active');
+    return;
+  }
+
+  // Show loading state
+  const startBtn = document.getElementById('startAIAgent');
+  const testBtn = document.getElementById('testAgent');
+  const removeBtn = document.getElementById('removeAIAgent');
+  const statusIndicator = document.getElementById('aiAgentStatus');
+
+  startBtn.textContent = 'Connecting...';
+  startBtn.disabled = true;
+
+  // Connect to AI agent
+  aiAgentSocket = new WebSocket('ws://localhost:8080');
+
+  aiAgentSocket.onopen = function(event) {
+    console.log('Connected to AI Agent');
+    aiAgentActive = true;
+
+    // Create AI agent participant
+    createAIAgentParticipant();
+
+    // Update UI
+    startBtn.style.display = 'none';
+    testBtn.style.display = 'inline-block';
+    removeBtn.style.display = 'inline-block';
+    statusIndicator.textContent = 'AI Agent Active';
+    statusIndicator.style.color = '#4CAF50';
+
+    // Send initial connection message
+    aiAgentSocket.send(JSON.stringify({
+      type: 'join_meeting',
+      meetingId: meetingCode,
+      participantName: "Metatron's AI Assistant"
+    }));
+  };
+
+  aiAgentSocket.onmessage = function(event) {
+    const data = JSON.parse(event.data);
+    console.log('AI Agent message:', data);
+
+    if (data.type === 'audio_response') {
+      // Handle AI audio response
+      playAIResponse(data.audio);
+    } else if (data.type === 'text_response') {
+      // Handle AI text response in chat
+      displayAIMessage(data.message);
+    }
+  };
+
+  aiAgentSocket.onerror = function(error) {
+    console.error('AI Agent error:', error);
+    resetAIAgentUI();
+  };
+
+  aiAgentSocket.onclose = function(event) {
+    console.log('AI Agent disconnected');
+    aiAgentActive = false;
+    removeAIAgentParticipant();
+    resetAIAgentUI();
+  };
+}
+
+function testAIAgent() {
+  if (!aiAgentActive || !aiAgentSocket) {
+    console.log('AI Agent not active');
+    return;
+  }
+
+  // Send test message
+  aiAgentSocket.send(JSON.stringify({
+    type: 'test',
+    message: 'Hello AI Agent, can you hear me? Please respond to confirm you are working.'
+  }));
+
+  console.log('Test message sent to AI Agent');
+}
+
+function removeAIAgent() {
+  if (aiAgentSocket) {
+    aiAgentSocket.close();
+  }
+
+  aiAgentActive = false;
+  removeAIAgentParticipant();
+  resetAIAgentUI();
+}
+
+function resetAIAgentUI() {
+  const startBtn = document.getElementById('startAIAgent');
+  const testBtn = document.getElementById('testAgent');
+  const removeBtn = document.getElementById('removeAIAgent');
+  const statusIndicator = document.getElementById('aiAgentStatus');
+
+  startBtn.style.display = 'inline-block';
+  startBtn.textContent = '🤖';
+  startBtn.disabled = false;
+  testBtn.style.display = 'none';
+  removeBtn.style.display = 'none';
+  statusIndicator.textContent = 'AI Agent Inactive';
+  statusIndicator.style.color = '#888';
+}
+
+function displayAIMessage(message) {
+  const chatBox = document.getElementById("chatArea");
+  const chatTemplate = `
+    <div style="margin-bottom: 10px;">
+      <span style="font-size:12px;">Metatron AI Assistant</span>
+      <div style="margin-top:5px">
+        <span style="background:#4CAF50;color:white;padding:5px;border-radius:8px">${message}</span>
+      </div>
+    </div>
+  `;
+  chatBox.insertAdjacentHTML("beforeend", chatTemplate);
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function playAIResponse(audioData) {
+  // Handle AI audio response
+  console.log('Playing AI audio response');
+  // Implementation for playing audio would go here
+}
