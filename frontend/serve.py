@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 
 # Set the port
-PORT = 9000
+PORT = 9001
 
 # Change to the current directory (frontend)
 current_dir = Path(__file__).parent

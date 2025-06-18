@@ -1,0 +1,32 @@
+# PraisonAI Orchestrator Service Dependencies
+# Core PraisonAI framework
+praisonaiagents>=0.0.1
+
+# Web framework (following existing pattern)
+Flask>=2.3.0
+Flask-CORS>=4.0.0
+
+# Google Gemini integration
+google-generativeai>=0.3.0
+
+# HTTP client for tool integrations
+requests>=2.31.0
+
+# Environment management
+python-dotenv>=1.0.0
+
+# Logging and monitoring
+structlog>=23.1.0
+
+# Async support
+asyncio>=3.4.3
+
+# JSON handling
+ujson>=5.8.0
+
+# Date/time utilities
+python-dateutil>=2.8.2
+
+# Additional utilities
+pydantic>=2.0.0
+typing-extensions>=4.7.0

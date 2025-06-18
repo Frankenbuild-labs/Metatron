@@ -11,25 +11,24 @@ from datetime import datetime
 from typing import Dict, List, Optional, Any
 from io import BytesIO
 
-# Import official Segmind SDK
-from segmind import Segmind
+# Import PIL for image processing
 from PIL import Image
 
-# Available Segmind models
+# Available Segmind models (only importing what exists)
 from segmind import (
-    SDXL, Kadinsky, SD2_1, ControlNet, 
+    SDXL, Kadinsky, SD2_1, ControlNet,
     BackgroundRemoval, Codeformer, ESRGAN,
     FaceSwap, QRGenerator, Word2Img, SDOutpainting,
-    SAM, SD1_5, Img2Img, Inpainting,
+    SAM, SD1_5,
     # Text to Image models
     TinySD, SmallSD, Paragon, RealisticVision,
     Reliberate, Revanimated, Colorful, Cartoon,
     EdgeOfRealism, EpicRealism, RPG, SciFi,
-    CyberRealistic, Samaritan, RCNZ, Manmarumix,
-    Majicmix, Juggernaut, Icbinp, FruitFusion,
-    Flat2D, FantassifiedIcons, DvArch, Dreamshaper,
-    DeepSpacedDiffusion, CuteRichStyle, AllInOnePixel,
-    Mix526
+    CyberRealistic, Samaritan, RCNZ, ManmaruMix,
+    MajicMix, Juggernaut, Icbinp, FruitFusion,
+    Flat2D, FantassifiedIcons, DvArch, DreamShaper,
+    DeepSpaceDiffusion, CuteRichStyle, AllInOnePixel,
+    Mix526, T2I, PortraitSD
 )
 
 
@@ -78,7 +77,7 @@ class SegmindService:
             },
             'dreamshaper': {
                 'name': 'Dreamshaper',
-                'class': Dreamshaper,
+                'class': DreamShaper,
                 'description': 'Fantasy and artistic creations',
                 'category': 'artistic',
                 'default_size': (512, 512)
@@ -190,16 +189,11 @@ class SegmindService:
                 # Text-to-image models
                 if params.get('negative_prompt'):
                     gen_params['negative_prompt'] = params['negative_prompt']
+
+                # Seed handling
                 if params.get('seed'):
-                    gen_params['seed'] = str(params['seed'])
-                else:
-                    gen_params['seed'] = str(uuid.uuid4().int % 1000000)
-                
-                # Size parameters
-                if model_config['default_size']:
-                    gen_params['img_width'] = params.get('width', model_config['default_size'][0])
-                    gen_params['img_height'] = params.get('height', model_config['default_size'][1])
-                
+                    gen_params['seed'] = int(params['seed'])
+
                 # Quality parameters
                 if params.get('steps'):
                     gen_params['num_inference_steps'] = params['steps']
@@ -207,11 +201,17 @@ class SegmindService:
                     gen_params['guidance_scale'] = params['guidance_scale']
                 if params.get('samples'):
                     gen_params['samples'] = params['samples']
-                
+
                 # Model-specific parameters
                 if model_id == 'sdxl':
                     gen_params['refiner'] = params.get('refiner', True)
                     gen_params['scheduler'] = params.get('scheduler', 'UniPC')
+                    gen_params['style'] = params.get('sdxl_style', 'base')
+                elif model_id == 'sd2_1':
+                    gen_params['scheduler'] = params.get('scheduler', 'DDIM')
+                elif model_id == 'realistic_vision':
+                    gen_params['scheduler'] = params.get('scheduler', 'dpmpp_2m')
+                    gen_params['strength'] = params.get('strength', 0.75)
             
             # Generate image
             print(f"🎨 Generating with {model_config['name']}: {gen_params['prompt']}")
