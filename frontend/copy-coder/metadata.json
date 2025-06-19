@@ -1,0 +1,6 @@
+{
+  "name": "Copy of Image Copy Coder",
+  "description": "An application that uses AI to analyze an image of a UI and generate corresponding front-end code (Python/Mesop based on AI's interpretation).",
+  "requestFramePermissions": [],
+  "prompt": ""
+}

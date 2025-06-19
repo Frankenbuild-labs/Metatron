@@ -1,15 +1,15 @@
 # Metatron - AI-Powered Creative Platform
 
-A comprehensive AI-powered platform featuring chat interface, creative studio, and video meeting capabilities.
+A comprehensive AI-powered platform featuring chat interface, creative studio, video meeting capabilities, and advanced web application builder.
 
 ## 🚀 Features
 
-### 💬 AI Chat Interface
+### 💬 AI Chat Interface (Main App)
 - Modern chat interface with AI assistant
-- Support for multiple AI models (Gemini 2.0 Flash, etc.)
+- Support for multiple AI models (Gemini 2.0 Flash, DeepSeek, etc.)
 - Adjustable temperature settings
 - Token counter and usage tracking
-- Responsive design with teal accent colors
+- Responsive design with teal accent colors (#069494)
 
 ### 🎨 Creative Studio
 - **Video Editor**: Custom Motionity video editor integration
@@ -24,7 +24,7 @@ A comprehensive AI-powered platform featuring chat interface, creative studio, a
 
 ### 📹 Video Meeting
 - Full-featured video conferencing powered by VideoSDK
-- Create and join meetings
+- Create and join meetings with AI agents integration
 - Audio/video controls
 - Screen sharing
 - In-meeting chat
@@ -32,13 +32,37 @@ A comprehensive AI-powered platform featuring chat interface, creative studio, a
 - Participant management
 - Device selection (camera/microphone/speaker)
 - Network quality indicators
+- Google Gemini LiveAPI integration for AI agents
+
+### �️ LocalSite-ai (Web Builder)
+- **Enhanced Code Generation**: Support for multiple languages and frameworks
+  - Frontend: React, Next.js, Vue, Svelte, TypeScript
+  - Backend: Node.js/Express, Python/FastAPI, Java/Spring Boot
+  - Full-Stack: Next.js, Nuxt, SvelteKit
+- **Vercel Template Gallery**: 10+ professional templates including:
+  - Next.js Boilerplate
+  - AI Chatbot
+  - E-commerce Store
+  - Blog Starter
+  - Portfolio Kit
+  - Admin Dashboard
+  - SaaS Starter
+  - Documentation Site
+  - Landing Page
+  - Image Gallery
+- **Template Features**:
+  - Category filtering (AI, Starter, Ecommerce, SaaS, Blog, Portfolio, etc.)
+  - One-click template selection
+  - Detailed prompts for each template
+  - Responsive grid layout matching Vercel's design
+- **Project Builder**: Complete project scaffolding with dependencies
+- **Deployment Ready**: Vercel, Netlify, Docker configurations
 
 ### 🔧 Additional Tools
-- Agent/Flow Builder (placeholder)
-- Social Station (placeholder)
-- App/Web Builder (placeholder)
-- Model Training (placeholder)
-- Connections/Integrations panel
+- **Agent Flow Builder**: Composio Agent Flow integration for workflow automation
+- **Witz Management Interface**: Frontend design and orchestrator management
+- **Connections**: 300+ integrations via Composio white-labeled connections
+- **Copy Coder**: Image-to-code conversion tool
 
 ## 🛠️ Technology Stack
 

@@ -3426,3 +3426,126 @@ body {
         justify-content: flex-end;
     }
 }
+
+/* App/Web Builder Styles */
+.web-builder-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: var(--bg-primary);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+}
+
+.web-builder-header {
+    height: 60px;
+    background: rgba(0, 0, 0, 0.8);
+    border-bottom: 1px solid var(--accent-primary);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    backdrop-filter: blur(10px);
+}
+
+.header-left, .header-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.header-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-primary);
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.header-title i {
+    color: var(--accent-primary);
+    font-size: 20px;
+}
+
+.header-btn {
+    background: rgba(6, 148, 148, 0.1);
+    border: 1px solid var(--accent-primary);
+    color: var(--text-primary);
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.header-btn:hover {
+    background: var(--accent-primary);
+    color: white;
+    transform: translateY(-1px);
+}
+
+.web-builder-loading, .web-builder-error {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    background: var(--bg-primary);
+}
+
+.web-builder-loading .loading-content,
+.web-builder-error .loading-content {
+    text-align: center;
+    max-width: 500px;
+    padding: 40px;
+}
+
+.web-builder-loading h3,
+.web-builder-error h3 {
+    color: var(--text-primary);
+    margin-bottom: 15px;
+    font-size: 24px;
+}
+
+.web-builder-loading p,
+.web-builder-error p {
+    color: var(--text-secondary);
+    margin-bottom: 25px;
+    line-height: 1.6;
+}
+
+.web-builder-error .error-instructions {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 15px;
+    border-radius: 6px;
+    margin: 20px 0;
+    border-left: 3px solid var(--accent-primary);
+}
+
+.web-builder-error .error-instructions code {
+    color: var(--accent-primary);
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+}
+
+/* Responsive Web Builder */
+@media (max-width: 768px) {
+    .web-builder-header {
+        height: 50px;
+        padding: 0 15px;
+    }
+
+    .header-title {
+        font-size: 16px;
+    }
+
+    .header-btn {
+        padding: 6px 10px;
+        font-size: 14px;
+    }
+}

@@ -238,6 +238,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     break;
                 case 'App/Web Builder':
                     console.log('App/Web Builder clicked');
+                    loadAppWebBuilder();
                     break;
                 case 'Model Training':
                     console.log('Model Training clicked');
@@ -1879,6 +1880,160 @@ async function loadAgentFlowBuilder() {
         `;
         showNotification('❌ Agent Flow service not available', 'error');
     }
+}
+
+async function loadAppWebBuilder() {
+    console.log('🌐 Loading App/Web Builder...');
+
+    // Hide chat interface and show web builder
+    const chatContainer = document.querySelector('.chat-container');
+    const rightSidebar = document.querySelector('.right-sidebar');
+
+    if (chatContainer) {
+        chatContainer.style.display = 'none';
+    }
+
+    // Create or show web builder container
+    let webBuilderContainer = document.getElementById('webBuilderContainer');
+    if (!webBuilderContainer) {
+        webBuilderContainer = document.createElement('div');
+        webBuilderContainer.id = 'webBuilderContainer';
+        webBuilderContainer.className = 'web-builder-container';
+        webBuilderContainer.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: var(--bg-primary);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+        `;
+        document.body.appendChild(webBuilderContainer);
+    }
+
+    try {
+        // Check if LocalSite-ai service is running
+        let healthCheck = null;
+        try {
+            healthCheck = await fetch('http://localhost:3002', {
+                mode: 'cors',
+                credentials: 'omit'
+            });
+        } catch (corsError) {
+            console.log('🔄 CORS issue detected, trying iframe direct load...');
+            healthCheck = { ok: true }; // Assume service is running
+        }
+
+        if (!healthCheck || !healthCheck.ok) {
+            webBuilderContainer.innerHTML = `
+                <div class="web-builder-loading">
+                    <div class="loading-content">
+                        <div class="loading-spinner"></div>
+                        <h3>Starting LocalSite-ai Service...</h3>
+                        <p>Please wait while we initialize the web builder</p>
+                        <div class="loading-steps">
+                            <div class="step active">🚀 Starting Next.js service</div>
+                            <div class="step">🎨 Loading Monaco Editor</div>
+                            <div class="step">🤖 Initializing AI models</div>
+                        </div>
+                        <button class="management-btn primary" onclick="loadAppWebBuilder()">
+                            <i class="fas fa-refresh"></i> Check Again
+                        </button>
+                        <button class="management-btn secondary" onclick="closeAppWebBuilder()">
+                            <i class="fas fa-times"></i> Close
+                        </button>
+                    </div>
+                </div>
+            `;
+            showNotification('🔄 Starting LocalSite-ai service...', 'info');
+            return;
+        }
+
+        // Create iframe for LocalSite-ai
+        webBuilderContainer.innerHTML = `
+            <div class="web-builder-header">
+                <div class="header-left">
+                    <button class="header-btn" onclick="closeAppWebBuilder()" title="Back to Chat">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <div class="header-title">
+                        <i class="fas fa-code"></i>
+                        <span>App/Web Builder</span>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <button class="header-btn" onclick="refreshAppWebBuilder()" title="Refresh">
+                        <i class="fas fa-refresh"></i>
+                    </button>
+                    <button class="header-btn" onclick="openAppWebBuilderInNewTab()" title="Open in New Tab">
+                        <i class="fas fa-external-link-alt"></i>
+                    </button>
+                </div>
+            </div>
+            <iframe
+                id="appWebBuilderIframe"
+                src="http://localhost:3002"
+                width="100%"
+                height="100%"
+                frameborder="0"
+                style="border: none; flex: 1; background: white;">
+            </iframe>
+        `;
+
+        showNotification('🌐 App/Web Builder loaded successfully!', 'success');
+
+    } catch (error) {
+        console.error('Error loading App/Web Builder:', error);
+        webBuilderContainer.innerHTML = `
+            <div class="web-builder-error">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h3>LocalSite-ai Service Not Available</h3>
+                <p>The App/Web Builder service is not running. Please start it first:</p>
+                <div class="error-instructions">
+                    <code>cd frontend/localsite-ai && npm run dev</code>
+                </div>
+                <button class="management-btn primary" onclick="loadAppWebBuilder()">
+                    <i class="fas fa-refresh"></i> Retry
+                </button>
+                <button class="management-btn secondary" onclick="closeAppWebBuilder()">
+                    <i class="fas fa-times"></i> Close
+                </button>
+            </div>
+        `;
+        showNotification('❌ App/Web Builder service not available', 'error');
+    }
+}
+
+function closeAppWebBuilder() {
+    console.log('🔒 Closing App/Web Builder...');
+
+    const webBuilderContainer = document.getElementById('webBuilderContainer');
+    if (webBuilderContainer) {
+        webBuilderContainer.remove();
+    }
+
+    // Show chat interface again
+    const chatContainer = document.querySelector('.chat-container');
+    if (chatContainer) {
+        chatContainer.style.display = 'flex';
+    }
+
+    showNotification('👋 App/Web Builder closed', 'info');
+}
+
+function refreshAppWebBuilder() {
+    console.log('🔄 Refreshing App/Web Builder...');
+    const iframe = document.getElementById('appWebBuilderIframe');
+    if (iframe) {
+        iframe.src = iframe.src;
+    }
+}
+
+function openAppWebBuilderInNewTab() {
+    console.log('🔗 Opening App/Web Builder in new tab...');
+    window.open('http://localhost:3002', '_blank');
 }
 
 function initializeFlowBuilder() {
