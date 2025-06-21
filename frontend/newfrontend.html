@@ -187,12 +187,19 @@
           </a>
         </div>
 
-        <!-- Tools Footer - Token Counter Only -->
+        <!-- Tools Footer - Token Counter and Brain Button -->
         <div class="tools-footer">
           <!-- Token Counter -->
           <div class="token-counter">
             <span class="token-label">Token count</span>
             <span class="token-value">599 / 1,048,576</span>
+          </div>
+
+          <!-- Brain Memory Button -->
+          <div class="brain-button-container">
+            <button class="brain-button" id="brainMemoryBtn" title="Memory System">
+              <i class="fas fa-brain"></i>
+            </button>
           </div>
         </div>
       </div>
@@ -234,6 +241,34 @@
                 <span>Database</span>
               </button>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cerebral Memory Modal -->
+  <div class="cerebral-memory-modal" id="cerebralMemoryModal">
+    <div class="cerebral-memory-container">
+      <!-- Header -->
+      <div class="cerebral-memory-header">
+        <div class="memory-title">
+          <i class="fas fa-brain"></i>
+          Cerebral Memory System
+        </div>
+        <button class="close-memory-btn" id="closeMemoryBtn">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <!-- Memory App Container -->
+      <div class="cerebral-memory-body">
+        <div id="cerebralAppContainer" class="memory-app-container">
+          <!-- Cerebral app will be loaded here -->
+          <div class="memory-loading">
+            <i class="fas fa-brain"></i>
+            <h3>Loading Memory System...</h3>
+            <p>Initializing 3D brain interface</p>
           </div>
         </div>
       </div>
@@ -461,34 +496,116 @@
           <div id="videoGenMode" class="content-mode">
             <div class="generator-interface">
               <div class="generator-main">
+                <!-- Video Generation Mode Tabs -->
+                <div class="generator-mode-tabs">
+                  <button class="mode-selector active" data-mode="text2video">
+                    <i class="fas fa-font"></i> Text to Video
+                  </button>
+                  <button class="mode-selector" data-mode="img2video">
+                    <i class="fas fa-image"></i> Image to Video
+                  </button>
+                  <button class="mode-selector" data-mode="voice2video">
+                    <i class="fas fa-microphone"></i> Voice to Video
+                  </button>
+                </div>
+
                 <div class="generation-area">
                   <div id="videoPreview" class="preview-area">
                     <div class="preview-placeholder">
                       <i class="fas fa-video"></i>
                       <h3>AI Video Generator</h3>
-                      <p>Create dynamic videos from text descriptions</p>
+                      <p>Create dynamic videos using Wan2.1-I2V-14B model</p>
                     </div>
                   </div>
 
                   <div class="generation-controls">
-                    <div class="prompt-input-area">
-                      <textarea id="videoPrompt" placeholder="Describe the video you want to create..." rows="3"></textarea>
-                      <button id="generateVideoBtn" class="generate-btn">
-                        <i class="fas fa-magic"></i> Generate Video
-                      </button>
+                    <!-- Text to Video Mode -->
+                    <div class="mode-controls active" data-mode="text2video">
+                      <div class="prompt-suggestions">
+                        <label>Quick Prompts:</label>
+                        <div class="suggestion-chips">
+                          <span class="suggestion-chip" onclick="document.getElementById('videoPrompt').value = 'A serene ocean wave crashing on a sandy beach at sunset'">Ocean Waves</span>
+                          <span class="suggestion-chip" onclick="document.getElementById('videoPrompt').value = 'A person walking through a bustling city street with dynamic camera movement'">City Walk</span>
+                          <span class="suggestion-chip" onclick="document.getElementById('videoPrompt').value = 'A beautiful flower blooming in time-lapse with soft lighting'">Time-lapse</span>
+                          <span class="suggestion-chip" onclick="document.getElementById('videoPrompt').value = 'A drone flying over a mountain landscape with cinematic camera work'">Aerial View</span>
+                        </div>
+                      </div>
+                      <div class="prompt-input-area">
+                        <textarea id="videoPrompt" placeholder="Describe the video you want to create..." rows="3"></textarea>
+                        <button id="generateVideoBtn" class="generate-btn">
+                          <i class="fas fa-magic"></i> Generate Video
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Image to Video Mode -->
+                    <div class="mode-controls" data-mode="img2video" style="display: none;">
+                      <div class="upload-section">
+                        <label>Reference Image</label>
+                        <input type="file" id="videoImageFile" accept="image/*" style="display: none;">
+                        <button class="upload-btn" onclick="document.getElementById('videoImageFile').click()">
+                          <i class="fas fa-upload"></i> Upload Image
+                        </button>
+                        <div id="videoImagePreview" class="uploaded-preview" style="display: none;"></div>
+                      </div>
+                      <div class="prompt-input-area">
+                        <textarea id="img2videoPrompt" placeholder="Describe how you want to animate this image..." rows="3"></textarea>
+                        <button id="generateImg2VideoBtn" class="generate-btn">
+                          <i class="fas fa-magic"></i> Animate Image
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Voice to Video Mode -->
+                    <div class="mode-controls" data-mode="voice2video" style="display: none;">
+                      <div class="upload-row">
+                        <div class="upload-section">
+                          <label>Audio File</label>
+                          <input type="file" id="voiceAudioInputMain" accept="audio/*" style="display: none;">
+                          <button class="upload-btn" onclick="document.getElementById('voiceAudioInputMain').click()">
+                            <i class="fas fa-upload"></i> Upload Audio
+                          </button>
+                          <div id="uploadedAudioPreviewMain" class="uploaded-preview" style="display: none;"></div>
+                        </div>
+                        <div class="upload-section">
+                          <label>Reference Image</label>
+                          <input type="file" id="voiceImageInputMain" accept="image/*" style="display: none;">
+                          <button class="upload-btn" onclick="document.getElementById('voiceImageInputMain').click()">
+                            <i class="fas fa-upload"></i> Upload Image
+                          </button>
+                          <div id="uploadedVoiceImagePreviewMain" class="uploaded-preview" style="display: none;"></div>
+                        </div>
+                      </div>
+                      <div class="prompt-input-area">
+                        <div class="prompt-suggestions">
+                          <label>Scene Presets:</label>
+                          <div class="suggestion-chips">
+                            <span class="suggestion-chip" onclick="document.getElementById('voicePrompt').value = 'A professional person in business attire presenting in a modern office setting'">Professional</span>
+                            <span class="suggestion-chip" onclick="document.getElementById('voicePrompt').value = 'A person sitting comfortably in a cozy living room having a conversation'">Casual</span>
+                            <span class="suggestion-chip" onclick="document.getElementById('voicePrompt').value = 'An instructor in a classroom setting explaining concepts'">Educational</span>
+                            <span class="suggestion-chip" onclick="document.getElementById('voicePrompt').value = 'A person speaking outdoors in a natural setting'">Outdoor</span>
+                          </div>
+                        </div>
+                        <textarea id="voicePrompt" placeholder="Describe the talking video scene..." rows="3"></textarea>
+                        <button id="generateVoiceBtn" class="generate-btn">
+                          <i class="fas fa-magic"></i> Generate Talking Video
+                        </button>
+                      </div>
                     </div>
 
                     <div class="generation-progress" id="videoProgress" style="display: none;">
                       <div class="progress-bar">
                         <div class="progress-fill"></div>
                       </div>
-                      <p>Generating your video...</p>
+                      <p>Generating your video... This may take a few minutes.</p>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+
+
         </div>
 
         <!-- Right Panel -->
@@ -500,8 +617,8 @@
             </button>
           </div>
 
-          <!-- Prompts Panel (Always visible in generator modes) -->
-          <div id="promptsPanel" class="panel-content active">
+          <!-- Image Generator Panel -->
+          <div id="imageGenPanel" class="panel-content active generator-panel">
             <div class="settings-group">
               <label>Generation Size</label>
               <div class="size-controls">
@@ -592,6 +709,173 @@
             <div class="settings-group">
               <label>Negative Prompts</label>
               <textarea id="negativePrompts" placeholder="Things you don't want in the generation..." rows="3"></textarea>
+            </div>
+          </div>
+
+          <!-- Video Generator Panel -->
+          <div id="videoGenPanel" class="panel-content generator-panel" style="display: none;">
+            <div class="settings-group">
+              <label>Video Resolution</label>
+              <div class="preset-sizes">
+                <button class="size-preset" data-width="1920" data-height="1080">1080p HD</button>
+                <button class="size-preset" data-width="1280" data-height="720">720p HD</button>
+                <button class="size-preset" data-width="854" data-height="480">480p SD</button>
+                <button class="size-preset" data-width="1080" data-height="1080">Square</button>
+              </div>
+            </div>
+
+            <div class="settings-group">
+              <label>Video Model</label>
+              <select id="videoModelSelector" class="model-selector">
+                <option value="wan2.1">Wan2.1-I2V-14B-480P (Integrated)</option>
+              </select>
+              <p style="font-size: 12px; color: var(--text-secondary); margin-top: 8px;">
+                This is the only video model currently integrated in the repository.
+              </p>
+            </div>
+
+            <div class="settings-group">
+              <label>Video Settings</label>
+              <div class="advanced-controls">
+                <div class="control-row">
+                  <label>Duration (seconds)</label>
+                  <input type="range" id="videoDurationSlider" min="2" max="10" value="5">
+                  <span id="videoDurationValue">5s</span>
+                </div>
+                <div class="control-row">
+                  <label>Motion Intensity</label>
+                  <input type="range" id="videoMotionSlider" min="0" max="100" value="50">
+                  <span id="videoMotionValue">50</span>
+                </div>
+                <div class="control-row">
+                  <label>Frame Rate</label>
+                  <select id="frameRateSelector" class="model-selector">
+                    <option value="24">24 FPS (Cinematic)</option>
+                    <option value="30" selected>30 FPS (Standard)</option>
+                    <option value="60">60 FPS (Smooth)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="settings-group">
+              <label>Camera & Movement</label>
+              <div class="style-grid">
+                <button class="style-preset" data-style="static">
+                  <i class="fas fa-camera"></i>
+                  Static Shot
+                </button>
+                <button class="style-preset" data-style="pan">
+                  <i class="fas fa-arrows-alt-h"></i>
+                  Pan Movement
+                </button>
+                <button class="style-preset" data-style="zoom">
+                  <i class="fas fa-search-plus"></i>
+                  Zoom Effect
+                </button>
+                <button class="style-preset" data-style="orbit">
+                  <i class="fas fa-sync-alt"></i>
+                  Orbit Camera
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Voice Generator Panel -->
+          <div id="voiceGenPanel" class="panel-content generator-panel" style="display: none;">
+            <div class="settings-group">
+              <label>Audio File</label>
+              <input type="file" id="voiceAudioInput" accept="audio/*" style="display: none;">
+              <button class="upload-btn" onclick="document.getElementById('voiceAudioInput').click()">
+                <i class="fas fa-upload"></i> Upload Audio
+              </button>
+              <div id="uploadedAudioPreview" class="uploaded-preview" style="display: none;"></div>
+            </div>
+
+            <div class="settings-group">
+              <label>Reference Image</label>
+              <input type="file" id="voiceImageInput" accept="image/*" style="display: none;">
+              <button class="upload-btn" onclick="document.getElementById('voiceImageInput').click()">
+                <i class="fas fa-upload"></i> Upload Image
+              </button>
+              <div id="uploadedVoiceImagePreview" class="uploaded-preview" style="display: none;"></div>
+            </div>
+
+            <div class="settings-group">
+              <label>Video Resolution</label>
+              <div class="size-controls">
+                <input type="number" id="voiceWidth" value="1080" min="480" max="1920">
+                <span>×</span>
+                <input type="number" id="voiceHeight" value="1080" min="480" max="1920">
+              </div>
+              <div class="preset-sizes">
+                <button class="size-preset" data-width="1920" data-height="1080">1080p</button>
+                <button class="size-preset" data-width="1280" data-height="720">720p</button>
+                <button class="size-preset" data-width="854" data-height="480">480p</button>
+                <button class="size-preset" data-width="1080" data-height="1920">Vertical</button>
+              </div>
+            </div>
+
+            <div class="settings-group">
+              <label>Voice Model</label>
+              <select id="voiceModelSelector" class="model-selector">
+                <option value="multitalk">MultiTalk (Recommended)</option>
+                <option value="wav2vec">Wav2Vec Base</option>
+                <option value="enhanced">Enhanced Quality</option>
+              </select>
+            </div>
+
+            <div class="settings-group">
+              <label>Processing Quality</label>
+              <div class="style-grid">
+                <button class="style-preset" data-quality="high">
+                  <i class="fas fa-star"></i>
+                  High Quality
+                </button>
+                <button class="style-preset" data-quality="balanced" class="active">
+                  <i class="fas fa-balance-scale"></i>
+                  Balanced
+                </button>
+                <button class="style-preset" data-quality="fast">
+                  <i class="fas fa-bolt"></i>
+                  Fast
+                </button>
+                <button class="style-preset" data-quality="ultra">
+                  <i class="fas fa-gem"></i>
+                  Ultra
+                </button>
+              </div>
+            </div>
+
+            <div class="settings-group">
+              <label>Advanced Settings</label>
+              <div class="advanced-controls">
+                <div class="control-row">
+                  <label>Lip Sync Precision</label>
+                  <input type="range" id="lipSyncSlider" min="0" max="100" value="85">
+                  <span id="lipSyncValue">85</span>
+                </div>
+                <div class="control-row">
+                  <label>Audio Enhancement</label>
+                  <input type="range" id="audioEnhanceSlider" min="0" max="100" value="70">
+                  <span id="audioEnhanceValue">70</span>
+                </div>
+                <div class="control-row">
+                  <label>Facial Dynamics</label>
+                  <input type="range" id="facialDynamicsSlider" min="0" max="100" value="60">
+                  <span id="facialDynamicsValue">60</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="settings-group">
+              <label>Scene Presets</label>
+              <div class="suggestion-chips">
+                <span class="suggestion-chip" onclick="document.getElementById('voicePrompt').value = 'A professional person in business attire presenting in a modern office setting with clean lighting'">Professional</span>
+                <span class="suggestion-chip" onclick="document.getElementById('voicePrompt').value = 'A person sitting comfortably in a cozy living room having a friendly conversation'">Casual</span>
+                <span class="suggestion-chip" onclick="document.getElementById('voicePrompt').value = 'An instructor in a classroom or studio setting explaining concepts with engaging gestures'">Educational</span>
+                <span class="suggestion-chip" onclick="document.getElementById('voicePrompt').value = 'A person speaking outdoors in a natural setting with soft natural lighting'">Outdoor</span>
+              </div>
             </div>
           </div>
         </div>
@@ -728,6 +1012,22 @@
 
   <!-- Basic JavaScript for Tab Switching -->
   <script src="script.js"></script>
+  <!-- Learning Interface -->
+  <script src="learning-interface.js"></script>
+  <!-- Conversation Interface -->
+  <script src="conversation-interface.js"></script>
+  <!-- Unified Memory Interface -->
+  <script src="unified-interface.js"></script>
+
+  <!-- Three.js for 3D Brain -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <!-- Memory System Integration -->
+  <script src="memory-integration.js"></script>
+
+  <!-- Cerebral Brain System -->
+  <script src="cerebral-brain.js"></script>
+  <script src="cerebral-memory.js"></script>
 
 </body>
 </html>

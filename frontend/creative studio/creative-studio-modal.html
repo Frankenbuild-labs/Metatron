@@ -322,6 +322,107 @@
             100% { width: 100%; }
         }
 
+        /* Voice Generator Specific Styles */
+        .voice-upload-area {
+            margin-bottom: 20px;
+        }
+
+        .upload-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .upload-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .upload-section label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .upload-btn {
+            padding: 12px 16px;
+            background: var(--bg-primary);
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+            min-height: 60px;
+        }
+
+        .upload-btn:hover {
+            background: var(--accent-primary);
+            color: white;
+            border-color: var(--accent-primary);
+        }
+
+        .uploaded-preview {
+            margin-top: 10px;
+            padding: 10px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .uploaded-preview img {
+            max-width: 100%;
+            max-height: 120px;
+            border-radius: 4px;
+        }
+
+        .uploaded-preview audio {
+            width: 100%;
+            margin-top: 5px;
+        }
+
+        .prompt-suggestions {
+            margin-bottom: 12px;
+        }
+
+        .prompt-suggestions label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .suggestion-chips {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .suggestion-chip {
+            padding: 4px 12px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            font-size: 11px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .suggestion-chip:hover {
+            background: var(--accent-primary);
+            color: white;
+            border-color: var(--accent-primary);
+        }
+
         /* Right Panel - Hidden for editor, shown for generators */
         .studio-right-panel {
             width: 320px;
@@ -599,6 +700,10 @@
             display: none;
         }
 
+        .generator-voice-only {
+            display: none;
+        }
+
         .studio-right-panel.generator-mode .editor-only {
             display: none;
         }
@@ -609,6 +714,100 @@
 
         .studio-right-panel.video-mode .generator-video-only {
             display: block;
+        }
+
+        .studio-right-panel.voice-mode .generator-voice-only {
+            display: block;
+        }
+
+        /* Hide image/video settings in voice mode */
+        .studio-right-panel.voice-mode .settings-group:not(.generator-voice-only) {
+            display: none !important;
+        }
+
+        /* Video mode specific settings */
+        .video-text2video-only,
+        .video-img2video-only,
+        .video-voice2video-only {
+            display: none;
+        }
+
+        .studio-right-panel.video-mode.text2video .video-text2video-only {
+            display: block;
+        }
+
+        .studio-right-panel.video-mode.img2video .video-img2video-only {
+            display: block;
+        }
+
+        .studio-right-panel.video-mode.voice2video .video-voice2video-only {
+            display: block;
+        }
+
+        /* Image generator specific settings */
+        .generator-image-only {
+            display: none;
+        }
+
+        .studio-right-panel.image-mode .generator-image-only {
+            display: block;
+        }
+
+        .studio-right-panel.video-mode .generator-video-only {
+            display: block;
+        }
+
+        /* Voice-specific styling */
+        .suggestion-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .suggestion-chip {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 6px 12px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .suggestion-chip:hover {
+            background: var(--accent-primary);
+            color: white;
+        }
+
+        .upload-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--accent-primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .upload-btn:hover {
+            background: var(--accent-hover);
+        }
+
+        .uploaded-preview {
+            margin-top: 8px;
+            padding: 8px;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
         }
 
         /* Generated content display */
@@ -1159,34 +1358,116 @@
                     <div id="videoGenMode" class="content-mode">
                         <div class="generator-interface">
                             <div class="generator-main">
+                                <!-- Video Generation Mode Tabs -->
+                                <div class="generator-mode-tabs">
+                                    <button class="mode-selector active" data-mode="text2video">
+                                        <i class="fas fa-font"></i> Text to Video
+                                    </button>
+                                    <button class="mode-selector" data-mode="img2video">
+                                        <i class="fas fa-image"></i> Image to Video
+                                    </button>
+                                    <button class="mode-selector" data-mode="voice2video">
+                                        <i class="fas fa-microphone"></i> Voice to Video
+                                    </button>
+                                </div>
+
                                 <div class="generation-area">
                                     <div id="videoPreview" class="preview-area">
                                         <div class="preview-placeholder">
                                             <i class="fas fa-video"></i>
                                             <h3>AI Video Generator</h3>
-                                            <p>Create dynamic videos from text descriptions</p>
+                                            <p>Create dynamic videos using Wan2.1-I2V-14B model</p>
                                         </div>
                                     </div>
-                                    
+
                                     <div class="generation-controls">
-                                        <div class="prompt-input-area">
-                                            <textarea id="videoPrompt" placeholder="Describe the video you want to create..." rows="3"></textarea>
-                                            <button id="generateVideoBtn" class="generate-btn">
-                                                <i class="fas fa-magic"></i> Generate Video
-                                            </button>
+                                        <!-- Text to Video Mode -->
+                                        <div class="mode-controls active" data-mode="text2video">
+                                            <div class="prompt-suggestions">
+                                                <label>Quick Prompts:</label>
+                                                <div class="suggestion-chips">
+                                                    <span class="suggestion-chip" onclick="document.getElementById('videoPrompt').value = 'A serene sunset over a calm ocean with gentle waves'">Ocean Sunset</span>
+                                                    <span class="suggestion-chip" onclick="document.getElementById('videoPrompt').value = 'A bustling city street at night with neon lights and traffic'">City Night</span>
+                                                    <span class="suggestion-chip" onclick="document.getElementById('videoPrompt').value = 'A peaceful forest with sunlight filtering through the trees'">Forest Scene</span>
+                                                    <span class="suggestion-chip" onclick="document.getElementById('videoPrompt').value = 'A majestic mountain landscape with clouds moving across the sky'">Mountain View</span>
+                                                </div>
+                                            </div>
+                                            <div class="prompt-input-area">
+                                                <textarea id="videoPrompt" placeholder="Describe the video you want to create..." rows="3"></textarea>
+                                                <button id="generateVideoBtn" class="generate-btn">
+                                                    <i class="fas fa-magic"></i> Generate Video
+                                                </button>
+                                            </div>
                                         </div>
-                                        
+
+                                        <!-- Image to Video Mode -->
+                                        <div class="mode-controls" data-mode="img2video" style="display: none;">
+                                            <div class="upload-section">
+                                                <label>Reference Image</label>
+                                                <input type="file" id="videoImageFile" accept="image/*" style="display: none;">
+                                                <button class="upload-btn" onclick="document.getElementById('videoImageFile').click()">
+                                                    <i class="fas fa-upload"></i> Upload Image
+                                                </button>
+                                                <div id="videoImagePreview" class="uploaded-preview" style="display: none;"></div>
+                                            </div>
+                                            <div class="prompt-input-area">
+                                                <textarea id="img2videoPrompt" placeholder="Describe how you want to animate this image..." rows="3"></textarea>
+                                                <button id="generateImg2VideoBtn" class="generate-btn">
+                                                    <i class="fas fa-magic"></i> Animate Image
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Voice to Video Mode -->
+                                        <div class="mode-controls" data-mode="voice2video" style="display: none;">
+                                            <div class="upload-row">
+                                                <div class="upload-section">
+                                                    <label>Audio File</label>
+                                                    <input type="file" id="voiceAudioInput" accept="audio/*" style="display: none;">
+                                                    <button class="upload-btn" onclick="document.getElementById('voiceAudioInput').click()">
+                                                        <i class="fas fa-upload"></i> Upload Audio
+                                                    </button>
+                                                    <div id="uploadedAudioPreview" class="uploaded-preview" style="display: none;"></div>
+                                                </div>
+                                                <div class="upload-section">
+                                                    <label>Reference Image</label>
+                                                    <input type="file" id="voiceImageInput" accept="image/*" style="display: none;">
+                                                    <button class="upload-btn" onclick="document.getElementById('voiceImageInput').click()">
+                                                        <i class="fas fa-upload"></i> Upload Image
+                                                    </button>
+                                                    <div id="uploadedVoiceImagePreview" class="uploaded-preview" style="display: none;"></div>
+                                                </div>
+                                            </div>
+                                            <div class="prompt-input-area">
+                                                <div class="prompt-suggestions">
+                                                    <label>Scene Presets:</label>
+                                                    <div class="suggestion-chips">
+                                                        <span class="suggestion-chip" onclick="document.getElementById('voicePrompt').value = 'A professional person in business attire presenting in a modern office setting'">Professional</span>
+                                                        <span class="suggestion-chip" onclick="document.getElementById('voicePrompt').value = 'A person sitting comfortably in a cozy living room having a conversation'">Casual</span>
+                                                        <span class="suggestion-chip" onclick="document.getElementById('voicePrompt').value = 'An instructor in a classroom setting explaining concepts'">Educational</span>
+                                                        <span class="suggestion-chip" onclick="document.getElementById('voicePrompt').value = 'A person speaking outdoors in a natural setting'">Outdoor</span>
+                                                    </div>
+                                                </div>
+                                                <textarea id="voicePrompt" placeholder="Describe the talking video scene..." rows="3"></textarea>
+                                                <button id="generateVoiceBtn" class="generate-btn">
+                                                    <i class="fas fa-magic"></i> Generate Talking Video
+                                                </button>
+                                            </div>
+                                        </div>
+
                                         <div class="generation-progress" id="videoProgress" style="display: none;">
                                             <div class="progress-bar">
                                                 <div class="progress-fill"></div>
                                             </div>
-                                            <p>Generating your video...</p>
+                                            <p>Generating your video... This may take a few minutes.</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+
                 </div>
 
                 <!-- Right Panel -->
@@ -1200,7 +1481,8 @@
 
                     <!-- Prompts Panel (Always visible in generator modes) -->
                     <div id="promptsPanel" class="panel-content active">
-                        <div class="settings-group">
+                        <!-- Image Generator Settings -->
+                        <div class="settings-group generator-image-only">
                             <label>Generation Size</label>
                             <div class="size-controls">
                                 <input type="number" id="canvasWidth" value="1024" min="100" max="4096">
@@ -1215,7 +1497,53 @@
                             </div>
                         </div>
 
-                        <div class="settings-group">
+                        <!-- Video Generator - Common Settings -->
+                        <div class="settings-group generator-video-only">
+                            <label>Video Resolution</label>
+                            <div class="size-controls">
+                                <input type="number" id="videoWidth" value="1280" min="480" max="1920">
+                                <span>×</span>
+                                <input type="number" id="videoHeight" value="720" min="480" max="1920">
+                            </div>
+                            <div class="preset-sizes">
+                                <button class="size-preset video-preset" data-width="1920" data-height="1080">1080p</button>
+                                <button class="size-preset video-preset" data-width="1280" data-height="720">720p</button>
+                                <button class="size-preset video-preset" data-width="854" data-height="480">480p</button>
+                                <button class="size-preset video-preset" data-width="1080" data-height="1920">Vertical</button>
+                            </div>
+                        </div>
+
+                        <!-- Video Generator - Voice to Video Specific -->
+                        <div class="settings-group video-voice2video-only">
+                            <label>Audio File</label>
+                            <input type="file" id="voiceAudioInputPanel" accept="audio/*" style="display: none;">
+                            <button class="upload-btn" onclick="document.getElementById('voiceAudioInputPanel').click()">
+                                <i class="fas fa-upload"></i> Upload Audio
+                            </button>
+                            <div id="uploadedAudioPreviewPanel" class="uploaded-preview" style="display: none;"></div>
+                        </div>
+
+                        <div class="settings-group video-voice2video-only">
+                            <label>Reference Image</label>
+                            <input type="file" id="voiceImageInputPanel" accept="image/*" style="display: none;">
+                            <button class="upload-btn" onclick="document.getElementById('voiceImageInputPanel').click()">
+                                <i class="fas fa-upload"></i> Upload Image
+                            </button>
+                            <div id="uploadedVoiceImagePreviewPanel" class="uploaded-preview" style="display: none;"></div>
+                        </div>
+
+                        <!-- Video Generator - Image to Video Specific -->
+                        <div class="settings-group video-img2video-only">
+                            <label>Reference Image</label>
+                            <input type="file" id="img2videoImageInputPanel" accept="image/*" style="display: none;">
+                            <button class="upload-btn" onclick="document.getElementById('img2videoImageInputPanel').click()">
+                                <i class="fas fa-upload"></i> Upload Image
+                            </button>
+                            <div id="img2videoImagePreviewPanel" class="uploaded-preview" style="display: none;"></div>
+                        </div>
+
+                        <!-- Image Generator Model Selection -->
+                        <div class="settings-group generator-image-only">
                             <label>Model Selection</label>
                             <select id="modelSelector" class="model-selector">
                                 <optgroup label="General Purpose">
@@ -1236,7 +1564,51 @@
                             </select>
                         </div>
 
-                        <div class="settings-group">
+                        <!-- Video Generator Model Selection -->
+                        <div class="settings-group generator-video-only">
+                            <label>Video Model</label>
+                            <select id="videoModelSelector" class="model-selector">
+                                <option value="wan2.1">Wan2.1-I2V-14B (Recommended)</option>
+                                <option value="stable_video">Stable Video Diffusion</option>
+                                <option value="runway">RunwayML Gen-2</option>
+                            </select>
+                        </div>
+
+                        <!-- Voice to Video Model Selection -->
+                        <div class="settings-group video-voice2video-only">
+                            <label>Voice Model</label>
+                            <select id="voiceModelSelector" class="model-selector">
+                                <option value="multitalk">MultiTalk (Recommended)</option>
+                                <option value="wav2vec">Wav2Vec Base</option>
+                                <option value="enhanced">Enhanced Quality</option>
+                            </select>
+                        </div>
+
+                        <!-- Voice Generator Processing Quality -->
+                        <div class="settings-group generator-voice-only">
+                            <label>Processing Quality</label>
+                            <div class="style-grid">
+                                <button class="style-preset" data-quality="high">
+                                    <i class="fas fa-star"></i>
+                                    High Quality
+                                </button>
+                                <button class="style-preset active" data-quality="balanced">
+                                    <i class="fas fa-balance-scale"></i>
+                                    Balanced
+                                </button>
+                                <button class="style-preset" data-quality="fast">
+                                    <i class="fas fa-bolt"></i>
+                                    Fast
+                                </button>
+                                <button class="style-preset" data-quality="ultra">
+                                    <i class="fas fa-gem"></i>
+                                    Ultra
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Image/Video Generator Style Presets (hidden in voice mode) -->
+                        <div class="settings-group" style="display: none;">
                             <label>Style Presets</label>
                             <div class="style-grid">
                                 <button class="style-preset" data-style="photorealistic">
@@ -1266,7 +1638,30 @@
                             </div>
                         </div>
 
-                        <div class="settings-group">
+                        <!-- Voice Generator Advanced Settings -->
+                        <div class="settings-group generator-voice-only">
+                            <label>Advanced Settings</label>
+                            <div class="advanced-controls">
+                                <div class="control-row">
+                                    <label>Lip Sync Precision</label>
+                                    <input type="range" id="lipSyncSlider" min="0" max="100" value="85">
+                                    <span id="lipSyncValue">85</span>
+                                </div>
+                                <div class="control-row">
+                                    <label>Audio Enhancement</label>
+                                    <input type="range" id="audioEnhanceSlider" min="0" max="100" value="70">
+                                    <span id="audioEnhanceValue">70</span>
+                                </div>
+                                <div class="control-row">
+                                    <label>Facial Dynamics</label>
+                                    <input type="range" id="facialDynamicsSlider" min="0" max="100" value="60">
+                                    <span id="facialDynamicsValue">60</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Image/Video Generator Advanced Settings (hidden in voice mode) -->
+                        <div class="settings-group" style="display: none;">
                             <label>Advanced Settings</label>
                             <div class="advanced-controls">
                                 <div class="control-row">
@@ -1287,7 +1682,19 @@
                             </div>
                         </div>
 
-                        <div class="settings-group">
+                        <!-- Voice Generator Scene Presets -->
+                        <div class="settings-group generator-voice-only">
+                            <label>Scene Presets</label>
+                            <div class="suggestion-chips">
+                                <span class="suggestion-chip" onclick="document.getElementById('voicePrompt').value = 'A professional person in business attire presenting in a modern office setting with clean lighting'">Professional</span>
+                                <span class="suggestion-chip" onclick="document.getElementById('voicePrompt').value = 'A person sitting comfortably in a cozy living room having a friendly conversation'">Casual</span>
+                                <span class="suggestion-chip" onclick="document.getElementById('voicePrompt').value = 'An instructor in a classroom or studio setting explaining concepts with engaging gestures'">Educational</span>
+                                <span class="suggestion-chip" onclick="document.getElementById('voicePrompt').value = 'A person speaking outdoors in a natural setting with soft natural lighting'">Outdoor</span>
+                            </div>
+                        </div>
+
+                        <!-- Image/Video Generator Negative Prompts (hidden in voice mode) -->
+                        <div class="settings-group" style="display: none;">
                             <label>Negative Prompts</label>
                             <textarea id="negativePrompts" placeholder="Things you don't want in the generation..." rows="3"></textarea>
                         </div>
@@ -1371,10 +1778,17 @@
                     this.switchMode('videoGen');
                 });
 
-                // Generator Mode Selectors
-                document.querySelectorAll('.mode-selector').forEach(btn => {
+                // Generator Mode Selectors (Image Generator)
+                document.querySelectorAll('#imageGenMode .mode-selector').forEach(btn => {
                     btn.addEventListener('click', () => {
                         this.switchGeneratorMode(btn.dataset.mode);
+                    });
+                });
+
+                // Video Mode Selectors (Video Generator)
+                document.querySelectorAll('#videoGenMode .mode-selector').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        this.switchVideoMode(btn.dataset.mode);
                     });
                 });
 
@@ -1385,6 +1799,10 @@
 
                 document.getElementById('generateVideoBtn').addEventListener('click', () => {
                     this.generateVideo();
+                });
+
+                document.getElementById('generateVoiceBtn').addEventListener('click', () => {
+                    this.generateVoice();
                 });
 
                 // Image to Image Controls
@@ -1427,6 +1845,27 @@
                     if (this.selectedEnhancement) {
                         this.enhanceImage();
                     }
+                });
+
+                // Voice file uploads
+                document.getElementById('voiceAudioInput').addEventListener('change', (e) => {
+                    this.handleAudioUpload(e, 'uploadedAudioPreview');
+                });
+
+                document.getElementById('voiceImageInput').addEventListener('change', (e) => {
+                    this.handleImageUpload(e, 'uploadedVoiceImagePreview');
+                });
+
+                // Video mode toggle
+                document.querySelectorAll('input[name="videoMode"]').forEach(radio => {
+                    radio.addEventListener('change', (e) => {
+                        const imageUpload = document.getElementById('videoImageUpload');
+                        if (e.target.value === 'image') {
+                            imageUpload.style.display = 'block';
+                        } else {
+                            imageUpload.style.display = 'none';
+                        }
+                    });
                 });
 
                 // Settings Controls
@@ -1492,42 +1931,88 @@
                     btn.addEventListener('click', () => {
                         const width = btn.dataset.width;
                         const height = btn.dataset.height;
-                        document.getElementById('canvasWidth').value = width;
-                        document.getElementById('canvasHeight').value = height;
+
+                        // Check which type of preset
+                        if (btn.classList.contains('video-preset')) {
+                            document.getElementById('videoWidth').value = width;
+                            document.getElementById('videoHeight').value = height;
+                        } else {
+                            document.getElementById('canvasWidth').value = width;
+                            document.getElementById('canvasHeight').value = height;
+                        }
                     });
                 });
 
                 // Style preset buttons
                 document.querySelectorAll('.style-preset').forEach(btn => {
                     btn.addEventListener('click', () => {
-                        // Remove active from all
-                        document.querySelectorAll('.style-preset').forEach(b => b.classList.remove('active'));
+                        // Remove active from all style presets in the same group
+                        const parentGroup = btn.closest('.settings-group');
+                        parentGroup.querySelectorAll('.style-preset').forEach(b => b.classList.remove('active'));
                         // Add active to clicked
                         btn.classList.add('active');
-                        
+
                         const style = btn.dataset.style;
-                        this.applyStylePreset(style);
+                        const quality = btn.dataset.quality;
+
+                        if (style) {
+                            this.applyStylePreset(style);
+                        }
+                        if (quality) {
+                            this.selectedQuality = quality;
+                        }
                     });
                 });
 
                 // Slider value updates
                 const creativitySlider = document.getElementById('creativitySlider');
                 const creativityValue = document.getElementById('creativityValue');
-                creativitySlider.addEventListener('input', () => {
-                    creativityValue.textContent = creativitySlider.value;
-                });
+                if (creativitySlider && creativityValue) {
+                    creativitySlider.addEventListener('input', () => {
+                        creativityValue.textContent = creativitySlider.value;
+                    });
+                }
 
                 const detailSlider = document.getElementById('detailSlider');
                 const detailValue = document.getElementById('detailValue');
-                detailSlider.addEventListener('input', () => {
-                    detailValue.textContent = detailSlider.value;
-                });
+                if (detailSlider && detailValue) {
+                    detailSlider.addEventListener('input', () => {
+                        detailValue.textContent = detailSlider.value;
+                    });
+                }
 
                 const motionSlider = document.getElementById('motionSlider');
                 const motionValue = document.getElementById('motionValue');
-                motionSlider.addEventListener('input', () => {
-                    motionValue.textContent = motionSlider.value;
-                });
+                if (motionSlider && motionValue) {
+                    motionSlider.addEventListener('input', () => {
+                        motionValue.textContent = motionSlider.value;
+                    });
+                }
+
+                // Voice-specific sliders
+                const lipSyncSlider = document.getElementById('lipSyncSlider');
+                const lipSyncValue = document.getElementById('lipSyncValue');
+                if (lipSyncSlider && lipSyncValue) {
+                    lipSyncSlider.addEventListener('input', () => {
+                        lipSyncValue.textContent = lipSyncSlider.value;
+                    });
+                }
+
+                const audioEnhanceSlider = document.getElementById('audioEnhanceSlider');
+                const audioEnhanceValue = document.getElementById('audioEnhanceValue');
+                if (audioEnhanceSlider && audioEnhanceValue) {
+                    audioEnhanceSlider.addEventListener('input', () => {
+                        audioEnhanceValue.textContent = audioEnhanceSlider.value;
+                    });
+                }
+
+                const facialDynamicsSlider = document.getElementById('facialDynamicsSlider');
+                const facialDynamicsValue = document.getElementById('facialDynamicsValue');
+                if (facialDynamicsSlider && facialDynamicsValue) {
+                    facialDynamicsSlider.addEventListener('input', () => {
+                        facialDynamicsValue.textContent = facialDynamicsSlider.value;
+                    });
+                }
             }
 
             switchMode(mode) {
@@ -1541,18 +2026,51 @@
 
                 // Update right panel classes
                 const rightPanel = document.querySelector('.studio-right-panel');
-                rightPanel.classList.remove('generator-mode', 'video-mode');
-                
+                rightPanel.classList.remove('generator-mode', 'video-mode', 'voice-mode', 'text2video', 'img2video', 'voice2video');
+
                 if (mode === 'imageGen' || mode === 'videoGen') {
                     rightPanel.classList.add('generator-mode');
                 }
 
+                if (mode === 'imageGen') {
+                    rightPanel.classList.add('image-mode');
+                }
+
                 if (mode === 'videoGen') {
                     rightPanel.classList.add('video-mode');
+                    // Default to text2video mode
+                    rightPanel.classList.add('text2video');
+                    this.switchVideoMode('text2video');
                 }
 
                 this.currentMode = mode;
                 console.log(`Switched to ${mode} mode`);
+            }
+
+            switchVideoMode(videoMode) {
+                // Update right panel video mode classes
+                const rightPanel = document.querySelector('.studio-right-panel');
+                rightPanel.classList.remove('text2video', 'img2video', 'voice2video');
+                rightPanel.classList.add(videoMode);
+
+                // Update mode selector buttons
+                document.querySelectorAll('.mode-selector').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.querySelector(`.mode-selector[data-mode="${videoMode}"]`).classList.add('active');
+
+                // Update mode controls visibility
+                document.querySelectorAll('.mode-controls').forEach(controls => {
+                    controls.classList.remove('active');
+                    controls.style.display = 'none';
+                });
+                const activeControls = document.querySelector(`.mode-controls[data-mode="${videoMode}"]`);
+                if (activeControls) {
+                    activeControls.classList.add('active');
+                    activeControls.style.display = 'block';
+                }
+
+                console.log(`Switched to ${videoMode} video mode`);
             }
 
             switchGeneratorMode(mode) {
@@ -1587,11 +2105,39 @@
                         preview.innerHTML = `<img src="${e.target.result}" style="max-width: 100%; max-height: 200px;">`;
                         preview.style.display = 'block';
                     }
-                    
+
                     // Store base64 for later use
                     this.uploadedImage = e.target.result.split(',')[1]; // Remove data:image/jpeg;base64, part
+
+                    // Store for voice generation if it's voice image upload
+                    if (previewId === 'uploadedVoiceImagePreview') {
+                        this.voiceImage = file;
+                    }
                 };
                 reader.readAsDataURL(file);
+            }
+
+            async handleAudioUpload(event, previewId) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                const preview = document.getElementById(previewId);
+                if (preview) {
+                    const audioUrl = URL.createObjectURL(file);
+                    preview.innerHTML = `
+                        <div style="text-align: center;">
+                            <i class="fas fa-music" style="font-size: 24px; color: var(--accent-primary); margin-bottom: 8px;"></i>
+                            <div style="font-size: 12px; margin-bottom: 8px;">${file.name}</div>
+                            <audio controls style="width: 100%;">
+                                <source src="${audioUrl}" type="${file.type}">
+                            </audio>
+                        </div>
+                    `;
+                    preview.style.display = 'block';
+                }
+
+                // Store for voice generation
+                this.voiceAudio = file;
             }
 
             async transformImage() {
@@ -2022,6 +2568,12 @@
                     return;
                 }
 
+                // Get generation options
+                const videoMode = document.querySelector('input[name="videoMode"]:checked').value;
+                const quality = document.getElementById('videoQuality').value;
+                const style = document.getElementById('videoStyle').value;
+                const duration = document.getElementById('videoDuration').value;
+
                 const btn = document.getElementById('generateVideoBtn');
                 const progress = document.getElementById('videoProgress');
                 const preview = document.getElementById('videoPreview');
@@ -2032,37 +2584,208 @@
                 progress.style.display = 'block';
 
                 try {
-                    // Simulate AI video generation (replace with actual video generation API)
-                    await this.simulateGeneration(5000); // Longer for video
+                    let response;
 
-                    // Show generated video (placeholder)
+                    if (videoMode === 'image') {
+                        // Image-to-Video mode
+                        const imageFile = document.getElementById('videoImageFile').files[0];
+                        if (!imageFile) {
+                            alert('Please select an image for Image-to-Video generation');
+                            return;
+                        }
+
+                        const formData = new FormData();
+                        formData.append('image', imageFile);
+                        formData.append('prompt', prompt);
+                        formData.append('quality', quality);
+                        formData.append('style', style);
+                        formData.append('duration', duration);
+
+                        console.log('🎬 Generating video from image with Wan2.1...', {
+                            image: imageFile.name,
+                            prompt: prompt,
+                            quality: quality,
+                            style: style,
+                            duration: duration
+                        });
+
+                        response = await fetch('http://localhost:5005/api/video/generate-from-image', {
+                            method: 'POST',
+                            body: formData
+                        });
+                    } else {
+                        // Text-to-Video mode
+                        console.log('🎬 Generating video from text with Wan2.1...', {
+                            prompt: prompt,
+                            quality: quality,
+                            style: style,
+                            duration: duration
+                        });
+
+                        response = await fetch('http://localhost:5005/api/video/generate', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                prompt: prompt,
+                                quality: quality,
+                                style: style,
+                                duration: duration
+                            })
+                        });
+                    }
+
+                    const result = await response.json();
+
+                    if (result.success && result.video_path) {
+                        // Show generated video
+                        preview.innerHTML = `
+                            <video class="generated-content" controls style="max-width: 100%; max-height: 100%;">
+                                <source src="${result.download_url}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                            <div class="content-actions">
+                                <button class="action-btn" title="Download" onclick="window.creativeStudio.downloadVideo('${result.download_url}')">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <button class="action-btn" title="Use in Editor" onclick="window.creativeStudio.useVideoInEditor('${result.download_url}')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="action-btn" title="Regenerate" onclick="window.creativeStudio.generateVideo()">
+                                    <i class="fas fa-sync"></i>
+                                </button>
+                            </div>
+                        `;
+
+                        this.showNotification('✅ Video generated successfully with Wan2.1!', 'success');
+                        console.log('✅ Video generated successfully:', result);
+
+                    } else {
+                        throw new Error(result.error || 'Video generation failed');
+                    }
+
+                } catch (error) {
+                    console.error('❌ Video generation failed:', error);
+
+                    // Show error in preview area
                     preview.innerHTML = `
-                        <video class="generated-content" controls>
-                            <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">
-                            Your browser does not support the video tag.
-                        </video>
-                        <div class="content-actions">
-                            <button class="action-btn" title="Download">
-                                <i class="fas fa-download"></i>
-                            </button>
-                            <button class="action-btn" title="Edit">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="action-btn" title="Regenerate">
-                                <i class="fas fa-sync"></i>
+                        <div class="preview-placeholder">
+                            <i class="fas fa-exclamation-triangle" style="color: var(--danger-color);"></i>
+                            <h3>Generation Failed</h3>
+                            <p>${error.message}</p>
+                            <button onclick="window.creativeStudio.generateVideo()"
+                                    style="margin-top: 15px; padding: 8px 16px; background: var(--accent-primary); border: none; border-radius: 4px; color: white; cursor: pointer;">
+                                Try Again
                             </button>
                         </div>
                     `;
 
-                    console.log('Video generated:', prompt);
-
-                } catch (error) {
-                    console.error('Video generation failed:', error);
-                    alert('Video generation failed. Please try again.');
+                    this.showNotification(`❌ Generation failed: ${error.message}`, 'error');
                 } finally {
                     // Reset button state
                     btn.disabled = false;
                     btn.innerHTML = '<i class="fas fa-magic"></i> Generate Video';
+                    progress.style.display = 'none';
+                }
+            }
+
+            async generateVoice() {
+                // Check if both files are uploaded
+                if (!this.voiceAudio) {
+                    alert('Please upload an audio file first');
+                    return;
+                }
+
+                if (!this.voiceImage) {
+                    alert('Please upload a reference image first');
+                    return;
+                }
+
+                const prompt = document.getElementById('voicePrompt').value;
+                if (!prompt.trim()) {
+                    alert('Please enter a scene description');
+                    return;
+                }
+
+                const btn = document.getElementById('generateVoiceBtn');
+                const progress = document.getElementById('voiceProgress');
+                const preview = document.getElementById('voicePreview');
+
+                // Show loading state
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+                progress.style.display = 'block';
+
+                try {
+                    // Create FormData for file upload
+                    const formData = new FormData();
+                    formData.append('audio', this.voiceAudio);
+                    formData.append('image', this.voiceImage);
+                    formData.append('prompt', prompt);
+
+                    console.log('🎤 Generating talking video with MultiTalk...', {
+                        audio: this.voiceAudio.name,
+                        image: this.voiceImage.name,
+                        prompt: prompt
+                    });
+
+                    // Call MultiTalk API
+                    const response = await fetch('http://localhost:5004/api/voice/generate', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success && result.video_path) {
+                        // Show generated video
+                        preview.innerHTML = `
+                            <video class="generated-content" controls style="max-width: 100%; max-height: 100%;">
+                                <source src="${result.download_url}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                            <div class="content-actions">
+                                <button class="action-btn" title="Download" onclick="window.creativeStudio.downloadVideo('${result.download_url}')">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <button class="action-btn" title="Use in Editor" onclick="window.creativeStudio.useVideoInEditor('${result.download_url}')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="action-btn" title="Regenerate" onclick="window.creativeStudio.generateVoice()">
+                                    <i class="fas fa-sync"></i>
+                                </button>
+                            </div>
+                        `;
+
+                        this.showNotification('✅ Talking video generated successfully!', 'success');
+                        console.log('✅ Voice video generated successfully:', result);
+
+                    } else {
+                        throw new Error(result.error || 'Voice generation failed');
+                    }
+
+                } catch (error) {
+                    console.error('❌ Voice generation failed:', error);
+
+                    // Show error in preview area
+                    preview.innerHTML = `
+                        <div class="preview-placeholder">
+                            <i class="fas fa-exclamation-triangle" style="color: var(--danger-color);"></i>
+                            <h3>Generation Failed</h3>
+                            <p>${error.message}</p>
+                            <button onclick="window.creativeStudio.generateVoice()"
+                                    style="margin-top: 15px; padding: 8px 16px; background: var(--accent-primary); border: none; border-radius: 4px; color: white; cursor: pointer;">
+                                Try Again
+                            </button>
+                        </div>
+                    `;
+
+                    this.showNotification(`❌ Generation failed: ${error.message}`, 'error');
+                } finally {
+                    // Reset button state
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-magic"></i> Generate Talking Video';
                     progress.style.display = 'none';
                 }
             }
@@ -2108,6 +2831,42 @@
                 // Set the prompt and regenerate
                 document.getElementById('imagePrompt').value = prompt;
                 await this.generateImage();
+            }
+
+            downloadVideo(videoUrl) {
+                const link = document.createElement('a');
+                link.href = videoUrl;
+                link.download = `ai-generated-video-${Date.now()}.mp4`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                this.showNotification('📥 Video download started', 'info');
+            }
+
+            useVideoInEditor(videoUrl) {
+                // Switch to editor mode and attempt to add video
+                this.switchMode('editor');
+
+                // Try to add video to motionity editor
+                try {
+                    const editorWindow = this.editor.contentWindow;
+                    if (editorWindow && editorWindow.addVideoFromUrl) {
+                        editorWindow.addVideoFromUrl(videoUrl);
+                        this.showNotification('✅ Video added to editor', 'success');
+                    } else {
+                        // Fallback: copy URL to clipboard
+                        navigator.clipboard.writeText(videoUrl).then(() => {
+                            this.showNotification('📋 Video URL copied to clipboard', 'info');
+                        });
+                    }
+                } catch (error) {
+                    console.warn('Could not add video to editor:', error);
+                    // Copy URL as fallback
+                    navigator.clipboard.writeText(videoUrl).then(() => {
+                        this.showNotification('📋 Video URL copied to clipboard', 'info');
+                    });
+                }
             }
 
             showNotification(message, type = 'info') {
@@ -2212,17 +2971,34 @@
                     }
                 } else {
                     // Clear generator content
-                    const preview = this.currentMode === 'imageGen' ? 
-                        document.getElementById('imagePreview') : 
-                        document.getElementById('videoPreview');
-                    
-                    preview.innerHTML = `
-                        <div class="preview-placeholder">
-                            <i class="fas fa-${this.currentMode === 'imageGen' ? 'image' : 'video'}"></i>
-                            <h3>AI ${this.currentMode === 'imageGen' ? 'Image' : 'Video'} Generator</h3>
-                            <p>${this.currentMode === 'imageGen' ? 'Enter a prompt to generate stunning images with AI' : 'Create dynamic videos from text descriptions'}</p>
-                        </div>
-                    `;
+                    let preview, icon, title, description;
+
+                    if (this.currentMode === 'imageGen') {
+                        preview = document.getElementById('imagePreview');
+                        icon = 'image';
+                        title = 'Image';
+                        description = 'Enter a prompt to generate stunning images with AI';
+                    } else if (this.currentMode === 'videoGen') {
+                        preview = document.getElementById('videoPreview');
+                        icon = 'video';
+                        title = 'Video';
+                        description = 'Create dynamic videos from text descriptions';
+                    } else if (this.currentMode === 'voiceGen') {
+                        preview = document.getElementById('voicePreview');
+                        icon = 'microphone';
+                        title = 'Voice';
+                        description = 'Create talking videos from audio and images';
+                    }
+
+                    if (preview) {
+                        preview.innerHTML = `
+                            <div class="preview-placeholder">
+                                <i class="fas fa-${icon}"></i>
+                                <h3>AI ${title} Generator</h3>
+                                <p>${description}</p>
+                            </div>
+                        `;
+                    }
                 }
                 
                 this.showNotification('✨ New project created', 'success');

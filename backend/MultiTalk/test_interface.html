@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MultiTalk Voice Generator Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .form-group { margin: 20px 0; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
+        button { background: #007bff; color: white; padding: 12px 24px; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .result { margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 4px; }
+        .error { background: #f8d7da; color: #721c24; }
+        .success { background: #d4edda; color: #155724; }
+    </style>
+</head>
+<body>
+    <h1>🎤 MultiTalk Voice Generator Test</h1>
+    
+    <form id="voiceForm" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="audio">Audio File (wav, mp3, flac, m4a):</label>
+            <input type="file" id="audio" name="audio" accept=".wav,.mp3,.flac,.m4a" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="image">Reference Image (jpg, png, bmp):</label>
+            <input type="file" id="image" name="image" accept=".jpg,.jpeg,.png,.bmp" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="prompt">Scene Description:</label>
+            <textarea id="prompt" name="prompt" rows="3" placeholder="Describe the talking video scene...">A person talking in a professional studio setting with good lighting</textarea>
+        </div>
+        
+        <button type="submit">Generate Talking Video</button>
+    </form>
+    
+    <div id="result" class="result" style="display: none;"></div>
+    
+    <script>
+        document.getElementById('voiceForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result';
+            resultDiv.innerHTML = '🔄 Generating talking video... This may take a few minutes.';
+            
+            const formData = new FormData(this);
+            
+            try {
+                const response = await fetch('/api/voice/generate', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.className = 'result success';
+                    resultDiv.innerHTML = `
+                        ✅ Video generated successfully!<br>
+                        <a href="${data.download_url}" download>Download Video</a><br>
+                        <video controls width="400" style="margin-top: 10px;">
+                            <source src="${data.download_url}" type="video/mp4">
+                        </video>
+                    `;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.innerHTML = `❌ Error: ${data.error}`;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `❌ Error: ${error.message}`;
+            }
+        });
+        
+        // Check status on load
+        fetch('/api/voice/status')
+            .then(response => response.json())
+            .then(data => {
+                if (data.status !== 'ready') {
+                    document.body.insertAdjacentHTML('afterbegin', 
+                        '<div class="result error">⚠️ MultiTalk models not downloaded yet. Please run setup first.</div>'
+                    );
+                }
+            });
+    </script>
+</body>
+</html>

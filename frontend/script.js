@@ -25,6 +25,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
+    // Initialize Cerebral Memory System
+    initializeCerebralMemory();
+
     // Initialize tab switching for right navigation
     const rightTabBtns = document.querySelectorAll('.right-nav .tab-btn');
     const rightTabContents = document.querySelectorAll('.right-nav .tab-content');
@@ -389,7 +392,7 @@ function initializeCreativeStudio() {
                 targetMode.classList.add('active');
             }
 
-            // Show/hide right panel based on mode
+            // Show/hide right panel and switch panel content based on mode
             if (mode === 'editor') {
                 if (rightPanel) {
                     rightPanel.style.display = 'none';
@@ -401,39 +404,75 @@ function initializeCreativeStudio() {
                     rightPanel.style.display = 'flex';
                     rightPanel.style.visibility = 'visible';
                 }
+
+                // Switch panel content based on generator mode
+                switchGeneratorPanel(mode);
             }
         });
     });
 
-    // Generator mode selectors
-    const modeSelectors = document.querySelectorAll('.mode-selector');
-    const modeControls = document.querySelectorAll('.mode-controls');
+    // Generator mode selectors - separate handling for image and video generators
 
-    modeSelectors.forEach(selector => {
+    // Image Generator mode selectors
+    const imageGenModeSelectors = document.querySelectorAll('#imageGenMode .mode-selector');
+    const imageGenModeControls = document.querySelectorAll('#imageGenMode .mode-controls');
+
+    imageGenModeSelectors.forEach(selector => {
         selector.addEventListener('click', () => {
             const mode = selector.getAttribute('data-mode');
 
-            // Update active selector
-            modeSelectors.forEach(s => s.classList.remove('active'));
+            // Update active selector within image generator
+            imageGenModeSelectors.forEach(s => s.classList.remove('active'));
             selector.classList.add('active');
 
-            // Update active controls
-            modeControls.forEach(control => {
+            // Update active controls within image generator
+            imageGenModeControls.forEach(control => {
                 control.style.display = 'none';
                 control.classList.remove('active');
             });
 
-            const targetControl = document.querySelector(`[data-mode="${mode}"]`);
-            if (targetControl && targetControl.classList.contains('mode-controls')) {
+            const targetControl = document.querySelector(`#imageGenMode [data-mode="${mode}"].mode-controls`);
+            if (targetControl) {
                 targetControl.style.display = 'block';
                 targetControl.classList.add('active');
             }
         });
     });
 
+    // Video Generator mode selectors
+    const videoGenModeSelectors = document.querySelectorAll('#videoGenMode .mode-selector');
+    const videoGenModeControls = document.querySelectorAll('#videoGenMode .mode-controls');
+
+    videoGenModeSelectors.forEach(selector => {
+        selector.addEventListener('click', () => {
+            const mode = selector.getAttribute('data-mode');
+
+            // Update active selector within video generator
+            videoGenModeSelectors.forEach(s => s.classList.remove('active'));
+            selector.classList.add('active');
+
+            // Update active controls within video generator
+            videoGenModeControls.forEach(control => {
+                control.style.display = 'none';
+                control.classList.remove('active');
+            });
+
+            const targetControl = document.querySelector(`#videoGenMode [data-mode="${mode}"].mode-controls`);
+            if (targetControl) {
+                targetControl.style.display = 'block';
+                targetControl.classList.add('active');
+            }
+
+            // Update right panel for video modes
+            updateVideoRightPanel(mode);
+        });
+    });
+
     // Generation buttons
     const generateImageBtn = document.getElementById('generateImageBtn');
     const generateVideoBtn = document.getElementById('generateVideoBtn');
+    const generateImg2VideoBtn = document.getElementById('generateImg2VideoBtn');
+    const generateVoiceBtn = document.getElementById('generateVoiceBtn');
 
     if (generateImageBtn) {
         generateImageBtn.addEventListener('click', generateImage);
@@ -443,6 +482,14 @@ function initializeCreativeStudio() {
         generateVideoBtn.addEventListener('click', generateVideo);
     }
 
+    if (generateImg2VideoBtn) {
+        generateImg2VideoBtn.addEventListener('click', generateImg2Video);
+    }
+
+    if (generateVoiceBtn) {
+        generateVoiceBtn.addEventListener('click', generateVoice);
+    }
+
     // Size presets
     const sizePresets = document.querySelectorAll('.size-preset');
     sizePresets.forEach(preset => {
@@ -450,23 +497,42 @@ function initializeCreativeStudio() {
             const width = preset.getAttribute('data-width');
             const height = preset.getAttribute('data-height');
 
-            const widthInput = document.getElementById('canvasWidth');
-            const heightInput = document.getElementById('canvasHeight');
+            // Check which panel is active and update the appropriate inputs
+            const imagePanel = document.getElementById('imageGenPanel');
+            const voicePanel = document.getElementById('voiceGenPanel');
 
-            if (widthInput) widthInput.value = width;
-            if (heightInput) heightInput.value = height;
+            if (imagePanel && imagePanel.style.display !== 'none') {
+                // Image generator panel is active
+                const widthInput = document.getElementById('canvasWidth');
+                const heightInput = document.getElementById('canvasHeight');
+
+                if (widthInput) widthInput.value = width;
+                if (heightInput) heightInput.value = height;
+            } else if (voicePanel && voicePanel.style.display !== 'none') {
+                // Voice generator panel is active
+                const widthInput = document.getElementById('voiceWidth');
+                const heightInput = document.getElementById('voiceHeight');
+
+                if (widthInput) widthInput.value = width;
+                if (heightInput) heightInput.value = height;
+            }
         });
     });
 
     // Slider controls
-    const sliders = ['creativity', 'detail', 'motion'];
+    const sliders = ['creativity', 'detail', 'motion', 'videoDuration', 'videoMotion', 'lipSync', 'audioEnhance', 'facialDynamics'];
     sliders.forEach(sliderName => {
         const slider = document.getElementById(sliderName + 'Slider');
         const value = document.getElementById(sliderName + 'Value');
 
         if (slider && value) {
             slider.addEventListener('input', (e) => {
-                value.textContent = e.target.value;
+                let displayValue = e.target.value;
+                // Special formatting for certain sliders
+                if (sliderName === 'videoDuration') {
+                    displayValue = e.target.value + 's';
+                }
+                value.textContent = displayValue;
             });
         }
     });
@@ -629,7 +695,51 @@ function generateImage() {
     }, 3000);
 }
 
-function generateVideo() {
+function switchGeneratorPanel(mode) {
+    // Hide all generator panels
+    const panels = document.querySelectorAll('.generator-panel');
+    panels.forEach(panel => {
+        panel.style.display = 'none';
+        panel.classList.remove('active');
+    });
+
+    // Show the appropriate panel for the current mode
+    let targetPanel;
+    switch(mode) {
+        case 'imageGen':
+            targetPanel = document.getElementById('imageGenPanel');
+            break;
+        case 'videoGen':
+            targetPanel = document.getElementById('videoGenPanel');
+            // Default to text2video mode for video generator
+            updateVideoRightPanel('text2video');
+            break;
+        default:
+            targetPanel = document.getElementById('imageGenPanel'); // Default to image
+    }
+
+    if (targetPanel) {
+        targetPanel.style.display = 'block';
+        targetPanel.classList.add('active');
+    }
+
+    console.log(`Switched to ${mode} panel`);
+}
+
+function updateVideoRightPanel(videoMode) {
+    const videoPanel = document.getElementById('videoGenPanel');
+    if (!videoPanel) return;
+
+    // Remove all video mode classes
+    videoPanel.classList.remove('text2video-mode', 'img2video-mode', 'voice2video-mode');
+
+    // Add the current video mode class
+    videoPanel.classList.add(`${videoMode}-mode`);
+
+    console.log(`Updated video right panel to ${videoMode} mode`);
+}
+
+async function generateVideo() {
     const prompt = document.getElementById('videoPrompt').value;
     const progress = document.getElementById('videoProgress');
     const preview = document.getElementById('videoPreview');
@@ -642,25 +752,392 @@ function generateVideo() {
     // Show progress
     progress.style.display = 'block';
 
-    // Simulate generation process
-    console.log('Generating video with prompt:', prompt);
+    try {
+        console.log('🎬 Generating video with Wan2.1 model...');
 
-    // Here you would integrate with your actual AI service
-    setTimeout(() => {
+        // Call Video API
+        const response = await fetch('http://localhost:5005/api/video/generate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                prompt: prompt,
+                width: 480,
+                height: 480,
+                duration: 5
+            })
+        });
+
+        const result = await response.json();
+
         progress.style.display = 'none';
 
-        // Show placeholder result
+        if (result.success) {
+            // Show successful result
+            preview.innerHTML = `
+                <div style="text-align: center; color: var(--text-primary);">
+                    <video controls style="max-width: 100%; border-radius: 8px; margin-bottom: 16px;">
+                        <source src="${result.video_url}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <h3>✅ Video Generated!</h3>
+                    <p>Prompt: "${prompt}"</p>
+                    <div style="margin-top: 16px;">
+                        <button onclick="downloadVideo('${result.video_url}')" class="download-btn">
+                            <i class="fas fa-download"></i> Download Video
+                        </button>
+                    </div>
+                </div>
+            `;
+        } else {
+            throw new Error(result.error || 'Generation failed');
+        }
+
+    } catch (error) {
+        progress.style.display = 'none';
+        console.error('❌ Video generation failed:', error);
+
+        // Show error message
         preview.innerHTML = `
             <div style="text-align: center; color: var(--text-primary);">
-                <i class="fas fa-video" style="font-size: 48px; color: var(--accent-primary); margin-bottom: 16px;"></i>
-                <h3>Video Generated!</h3>
-                <p>Prompt: "${prompt}"</p>
+                <i class="fas fa-exclamation-triangle" style="font-size: 48px; color: #ff6b6b; margin-bottom: 16px;"></i>
+                <h3>Generation Failed</h3>
+                <p style="color: var(--text-secondary);">Error: ${error.message}</p>
                 <p style="font-size: 12px; color: var(--text-secondary); margin-top: 8px;">
-                    This is a placeholder. Integrate with your AI service for actual generation.
+                    Please check that the Video API service is running on port 5005.
                 </p>
             </div>
         `;
-    }, 5000);
+    }
+}
+
+async function generateImg2Video() {
+    const imageInput = document.getElementById('videoImageFile');
+    const prompt = document.getElementById('img2videoPrompt').value;
+    const progress = document.getElementById('videoProgress');
+    const preview = document.getElementById('videoPreview');
+
+    // Validate inputs
+    if (!imageInput.files[0]) {
+        alert('Please upload an image file');
+        return;
+    }
+
+    if (!prompt.trim()) {
+        alert('Please enter a description for the animation');
+        return;
+    }
+
+    // Show progress
+    progress.style.display = 'block';
+
+    try {
+        // Create FormData for file upload
+        const formData = new FormData();
+        formData.append('image', imageInput.files[0]);
+        formData.append('prompt', prompt);
+
+        console.log('🎬 Generating image-to-video with Wan2.1 model...');
+
+        // Call Image-to-Video API
+        const response = await fetch('http://localhost:5005/api/video/img2video', {
+            method: 'POST',
+            body: formData
+        });
+
+        const result = await response.json();
+
+        progress.style.display = 'none';
+
+        if (result.success) {
+            // Show successful result
+            preview.innerHTML = `
+                <div style="text-align: center; color: var(--text-primary);">
+                    <video controls style="max-width: 100%; border-radius: 8px; margin-bottom: 16px;">
+                        <source src="${result.video_url}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <h3>✅ Image Animated!</h3>
+                    <p>Animation: "${prompt}"</p>
+                    <div style="margin-top: 16px;">
+                        <button onclick="downloadVideo('${result.video_url}')" class="download-btn">
+                            <i class="fas fa-download"></i> Download Video
+                        </button>
+                    </div>
+                </div>
+            `;
+        } else {
+            throw new Error(result.error || 'Generation failed');
+        }
+
+    } catch (error) {
+        progress.style.display = 'none';
+        console.error('❌ Image-to-video generation failed:', error);
+
+        // Show error message
+        preview.innerHTML = `
+            <div style="text-align: center; color: var(--text-primary);">
+                <i class="fas fa-exclamation-triangle" style="font-size: 48px; color: #ff6b6b; margin-bottom: 16px;"></i>
+                <h3>Animation Failed</h3>
+                <p style="color: var(--text-secondary);">Error: ${error.message}</p>
+                <p style="font-size: 12px; color: var(--text-secondary); margin-top: 8px;">
+                    Please check that the Video API service is running on port 5005.
+                </p>
+            </div>
+        `;
+    }
+}
+
+async function generateVoice() {
+    // Try to get inputs from main content area first, then fallback to right panel
+    const audioInput = document.getElementById('voiceAudioInputMain') || document.getElementById('voiceAudioInput');
+    const imageInput = document.getElementById('voiceImageInputMain') || document.getElementById('voiceImageInput');
+    const prompt = document.getElementById('voicePrompt').value;
+    const progress = document.getElementById('videoProgress'); // Use shared video progress
+    const preview = document.getElementById('videoPreview'); // Use shared video preview
+
+    // Validate inputs
+    if (!audioInput.files[0]) {
+        alert('Please upload an audio file');
+        return;
+    }
+
+    if (!imageInput.files[0]) {
+        alert('Please upload a reference image');
+        return;
+    }
+
+    if (!prompt.trim()) {
+        alert('Please enter a scene description');
+        return;
+    }
+
+    // Show progress
+    progress.style.display = 'block';
+
+    try {
+        // Create FormData for file upload
+        const formData = new FormData();
+        formData.append('audio', audioInput.files[0]);
+        formData.append('image', imageInput.files[0]);
+        formData.append('prompt', prompt);
+
+        console.log('🎤 Generating talking video with MultiTalk...');
+
+        // Call MultiTalk API
+        const response = await fetch('http://localhost:5004/api/voice/generate', {
+            method: 'POST',
+            body: formData
+        });
+
+        const result = await response.json();
+
+        progress.style.display = 'none';
+
+        if (result.success) {
+            // Show successful result
+            preview.innerHTML = `
+                <div style="text-align: center; color: var(--text-primary);">
+                    <video controls style="max-width: 100%; border-radius: 8px; margin-bottom: 16px;">
+                        <source src="${result.video_url}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <h3>✅ Talking Video Generated!</h3>
+                    <p>Scene: "${prompt}"</p>
+                    <div style="margin-top: 16px;">
+                        <button onclick="downloadVideo('${result.video_url}')" class="download-btn">
+                            <i class="fas fa-download"></i> Download Video
+                        </button>
+                    </div>
+                </div>
+            `;
+        } else {
+            throw new Error(result.error || 'Generation failed');
+        }
+
+    } catch (error) {
+        progress.style.display = 'none';
+        console.error('❌ Voice generation failed:', error);
+
+        // Show error message
+        preview.innerHTML = `
+            <div style="text-align: center; color: var(--text-primary);">
+                <i class="fas fa-exclamation-triangle" style="font-size: 48px; color: #ff6b6b; margin-bottom: 16px;"></i>
+                <h3>Generation Failed</h3>
+                <p style="color: var(--text-secondary);">Error: ${error.message}</p>
+                <p style="font-size: 12px; color: var(--text-secondary); margin-top: 8px;">
+                    Please check that the MultiTalk service is running on port 5004.
+                </p>
+            </div>
+        `;
+    }
+}
+
+function downloadVideo(videoUrl) {
+    const link = document.createElement('a');
+    link.href = videoUrl;
+    link.download = `talking_video_${Date.now()}.mp4`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+// File upload handlers
+document.addEventListener('DOMContentLoaded', function() {
+    // Audio file upload handler (main content area)
+    const audioInputMain = document.getElementById('voiceAudioInputMain');
+    if (audioInputMain) {
+        audioInputMain.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const preview = document.getElementById('uploadedAudioPreviewMain');
+
+            if (file && preview) {
+                preview.style.display = 'block';
+                preview.innerHTML = `
+                    <div class="file-preview">
+                        <i class="fas fa-music"></i>
+                        <span>${file.name}</span>
+                        <button onclick="clearAudioUploadMain()" class="clear-btn">×</button>
+                    </div>
+                `;
+            }
+        });
+    }
+
+    // Image file upload handler (main content area)
+    const imageInputMain = document.getElementById('voiceImageInputMain');
+    if (imageInputMain) {
+        imageInputMain.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const preview = document.getElementById('uploadedVoiceImagePreviewMain');
+
+            if (file && preview) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.style.display = 'block';
+                    preview.innerHTML = `
+                        <div class="file-preview">
+                            <img src="${e.target.result}" alt="Preview" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;">
+                            <span>${file.name}</span>
+                            <button onclick="clearImageUploadMain()" class="clear-btn">×</button>
+                        </div>
+                    `;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    // Audio file upload handler (right panel)
+    const audioInput = document.getElementById('voiceAudioInput');
+    if (audioInput) {
+        audioInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const preview = document.getElementById('uploadedAudioPreview');
+
+            if (file && preview) {
+                preview.style.display = 'block';
+                preview.innerHTML = `
+                    <div class="file-preview">
+                        <i class="fas fa-music"></i>
+                        <span>${file.name}</span>
+                        <button onclick="clearAudioUpload()" class="clear-btn">×</button>
+                    </div>
+                `;
+            }
+        });
+    }
+
+    // Image file upload handler (right panel)
+    const imageInput = document.getElementById('voiceImageInput');
+    if (imageInput) {
+        imageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const preview = document.getElementById('uploadedVoiceImagePreview');
+
+            if (file && preview) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.style.display = 'block';
+                    preview.innerHTML = `
+                        <div class="file-preview">
+                            <img src="${e.target.result}" alt="Preview" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;">
+                            <span>${file.name}</span>
+                            <button onclick="clearImageUpload()" class="clear-btn">×</button>
+                        </div>
+                    `;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    // Image file upload handler for img2video
+    const videoImageInput = document.getElementById('videoImageFile');
+    if (videoImageInput) {
+        videoImageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const preview = document.getElementById('videoImagePreview');
+
+            if (file && preview) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.style.display = 'block';
+                    preview.innerHTML = `
+                        <div class="file-preview">
+                            <img src="${e.target.result}" alt="Preview" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;">
+                            <span>${file.name}</span>
+                            <button onclick="clearVideoImageUpload()" class="clear-btn">×</button>
+                        </div>
+                    `;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+});
+
+function clearAudioUpload() {
+    const input = document.getElementById('voiceAudioInput');
+    const preview = document.getElementById('uploadedAudioPreview');
+    if (input) input.value = '';
+    if (preview) preview.style.display = 'none';
+}
+
+function clearAudioUploadMain() {
+    const input = document.getElementById('voiceAudioInputMain');
+    const preview = document.getElementById('uploadedAudioPreviewMain');
+    if (input) input.value = '';
+    if (preview) preview.style.display = 'none';
+}
+
+function clearImageUpload() {
+    const input = document.getElementById('voiceImageInput');
+    const preview = document.getElementById('uploadedVoiceImagePreview');
+    if (input) input.value = '';
+    if (preview) preview.style.display = 'none';
+}
+
+function clearImageUploadMain() {
+    const input = document.getElementById('voiceImageInputMain');
+    const preview = document.getElementById('uploadedVoiceImagePreviewMain');
+    if (input) input.value = '';
+    if (preview) preview.style.display = 'none';
+}
+
+function clearVideoImageUpload() {
+    const input = document.getElementById('videoImageFile');
+    const preview = document.getElementById('videoImagePreview');
+    if (input) input.value = '';
+    if (preview) preview.style.display = 'none';
+}
+
+function clearImageUpload() {
+    const input = document.getElementById('voiceImageInput');
+    const preview = document.getElementById('uploadedVoiceImagePreview');
+    if (input) input.value = '';
+    if (preview) preview.style.display = 'none';
 }
 
 // Video Meeting Functions
@@ -3382,5 +3859,105 @@ function initializeChatInterface() {
                 sendMessage();
             }
         });
+    }
+}
+
+// Cerebral Memory System Functions
+function initializeCerebralMemory() {
+    const brainBtn = document.getElementById('brainMemoryBtn');
+    const memoryModal = document.getElementById('cerebralMemoryModal');
+    const closeMemoryBtn = document.getElementById('closeMemoryBtn');
+
+    if (brainBtn) {
+        brainBtn.addEventListener('click', openCerebralMemory);
+    }
+
+    if (closeMemoryBtn) {
+        closeMemoryBtn.addEventListener('click', closeCerebralMemory);
+    }
+
+    // Close modal when clicking outside
+    if (memoryModal) {
+        memoryModal.addEventListener('click', (e) => {
+            if (e.target === memoryModal) {
+                closeCerebralMemory();
+            }
+        });
+    }
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && memoryModal && memoryModal.classList.contains('active')) {
+            closeCerebralMemory();
+        }
+    });
+}
+
+function openCerebralMemory() {
+    const memoryModal = document.getElementById('cerebralMemoryModal');
+    const appContainer = document.getElementById('cerebralAppContainer');
+
+    if (memoryModal) {
+        memoryModal.classList.add('active');
+
+        // Load the Cerebral app in iframe to keep user in main app
+        loadCerebralApp(appContainer);
+    }
+}
+
+function closeCerebralMemory() {
+    const memoryModal = document.getElementById('cerebralMemoryModal');
+
+    if (memoryModal) {
+        memoryModal.classList.remove('active');
+
+        // Clean up the 3D brain when closing
+        const appContainer = document.getElementById('cerebralAppContainer');
+        if (appContainer && appContainer.brainInstance) {
+            appContainer.brainInstance.destroy();
+            appContainer.brainInstance = null;
+        }
+
+        // Reset container for next load
+        if (appContainer) {
+            appContainer.innerHTML = `
+                <div class="memory-loading">
+                    <i class="fas fa-brain"></i>
+                    <h3>Loading Memory System...</h3>
+                    <p>Initializing 3D brain interface</p>
+                </div>
+            `;
+        }
+    }
+}
+
+function loadCerebralApp(container) {
+    if (!container) return;
+
+    // Clear container and create 3D brain
+    container.innerHTML = '';
+    container.style.width = '100%';
+    container.style.height = '100%';
+    container.style.position = 'relative';
+
+    try {
+        // Initialize the 3D brain
+        const brain = new CerebralBrain(container);
+        console.log('Cerebral Memory System loaded successfully');
+
+        // Store brain instance for cleanup
+        container.brainInstance = brain;
+    } catch (error) {
+        console.error('Failed to load Cerebral Memory System:', error);
+        container.innerHTML = `
+            <div class="memory-loading">
+                <i class="fas fa-exclamation-triangle" style="color: #ff6b6b;"></i>
+                <h3>Failed to Load Memory System</h3>
+                <p>Error: ${error.message}</p>
+                <button onclick="loadCerebralApp(document.getElementById('cerebralAppContainer'))" style="margin-top: 16px; padding: 8px 16px; background: var(--accent-primary); color: white; border: none; border-radius: 4px; cursor: pointer;">
+                    <i class="fas fa-refresh"></i> Retry
+                </button>
+            </div>
+        `;
     }
 }

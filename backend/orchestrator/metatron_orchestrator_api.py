@@ -389,7 +389,7 @@ def internal_error(error):
 if __name__ == '__main__':
     # Initialize orchestrator on startup
     initialize_orchestrator()
-    
+
     # Print startup banner (following segmind pattern)
     port = config['server']['port']
     print(f"""
@@ -401,7 +401,7 @@ if __name__ == '__main__':
 ║  Model: {config['praisonai']['model']:<25} ║
 ╚══════════════════════════════════════════╝
     """)
-    
+
     # Run server (following segmind pattern)
     app.run(
         host=config['server']['host'],

@@ -81,13 +81,20 @@ Metatron/
 │   ├── styles.css            # Application styles
 │   ├── script.js             # Main JavaScript functionality
 │   ├── serve.py              # Development server
+│   ├── agent-flow/          # Agent Flow Builder (Port 3000)
 │   ├── creative studio/      # Motionity video editor
 │   └── videosdk/            # VideoSDK integration
 │       ├── index.html       # VideoSDK interface
 │       ├── index.js         # VideoSDK functionality
 │       ├── index.css        # VideoSDK styles
 │       └── config.js        # VideoSDK configuration
-├── back end/                 # Backend services (future)
+├── backend/                  # Backend services
+│   ├── ai-agent/            # VideoSDK AI agent service (Port 5003)
+│   ├── creative-studio/     # Segmind API server (Port 5002)
+│   ├── MultiTalk/           # Voice generation service (Port 5004)
+│   ├── orchestrator/        # Main AI orchestrator (Port 5001)
+│   ├── segmind_api.py       # Image generation API (Port 5002)
+│   └── voice_generator/     # Voice generation utilities
 └── README.md
 ```
 

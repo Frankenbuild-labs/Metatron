@@ -81,3 +81,11 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+
+# Large model weights and binaries
+backend/MultiTalk/weights/
+*.safetensors
+*.bin
+*.ckpt
+*.pth
+*.pt

@@ -1,0 +1,5 @@
+{
+  "name": "Interactive 3D Brain Memory Visualizer",
+  "description": "A React application that allows users to interact with a 3D brain model, click on specific sections (mapped to memory types), and manage associated information like images, documents, URLs, and notes for each section.",
+  "requestFramePermissions": []
+}
