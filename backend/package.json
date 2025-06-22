@@ -1,0 +1,18 @@
+{
+  "name": "metatron-backend",
+  "version": "1.0.0",
+  "description": "Backend services for Metatron platform including Social Station",
+  "main": "social-station.js",
+  "scripts": {
+    "start": "node social-station.js",
+    "dev": "nodemon social-station.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "socket.io": "^4.7.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

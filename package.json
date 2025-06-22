@@ -1,0 +1,20 @@
+{
+  "name": "metatron-platform",
+  "version": "1.0.0",
+  "description": "Unified AI platform with Social Station integration",
+  "main": "server.js",
+  "scripts": {
+    "start": "python frontend/serve.py",
+    "start:social": "node backend/social-station.js",
+    "start:all": "concurrently \"npm run start\" \"npm run start:social\"",
+    "dev": "concurrently \"npm run start\" \"npm run start:social\"",
+    "install:social": "cd backend && npm install"
+  },
+  "dependencies": {
+    "concurrently": "^8.2.0"
+  },
+  "devDependencies": {},
+  "keywords": ["ai", "platform", "social-media", "automation"],
+  "author": "Metatron Platform",
+  "license": "MIT"
+}

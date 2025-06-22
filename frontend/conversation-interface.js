@@ -116,21 +116,29 @@ class ConversationInterface {
             };
         }
         
-        // Also intercept Enter key in chat input
-        const chatInput = document.querySelector('#messageInput, .chat-input, input[type="text"]');
-        if (chatInput) {
-            chatInput.addEventListener('keypress', async (e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    await this.handleConversationMessage();
-                }
-            });
+        // DISABLED: Do not intercept main chat - it has its own system
+        // The conversation interface should only work if there's a dedicated chatMessages container
+        const chatContainer = document.getElementById('chatMessages');
+        if (chatContainer) {
+            const chatInput = document.querySelector('#messageInput, .chat-input');
+            if (chatInput && !chatInput.classList.contains('text-input')) {
+                chatInput.addEventListener('keypress', async (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        await this.handleConversationMessage();
+                    }
+                });
+            }
         }
     }
     
     async handleConversationMessage() {
-        const chatInput = document.querySelector('#messageInput, .chat-input, input[type="text"]');
-        if (!chatInput || !chatInput.value.trim()) return;
+        // Only work if chatMessages container exists and input is not the main chat
+        const chatContainer = document.getElementById('chatMessages');
+        if (!chatContainer) return;
+
+        const chatInput = document.querySelector('#messageInput, .chat-input');
+        if (!chatInput || !chatInput.value.trim() || chatInput.classList.contains('text-input')) return;
         
         const message = chatInput.value.trim();
         chatInput.value = '';

@@ -1,0 +1,14 @@
+# Social Station Agent Requirements
+praisonai>=0.0.50
+composio-praisonai>=0.1.0
+flask>=2.3.0
+flask-cors>=4.0.0
+python-dotenv>=1.0.0
+asyncio
+requests>=2.31.0
+pydantic>=2.0.0
+
+# Optional for enhanced functionality
+celery>=5.3.0  # For scheduling
+redis>=4.6.0   # For task queue
+sqlalchemy>=2.0.0  # For database storage

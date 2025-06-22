@@ -155,6 +155,7 @@
             <i class="fas fa-palette"></i>
             <span>Creative Studio</span>
           </a>
+
           <a href="#" class="nav-button">
             <i class="fas fa-share-alt"></i>
             <span>Social Station</span>
@@ -269,6 +270,315 @@
             <i class="fas fa-brain"></i>
             <h3>Loading Memory System...</h3>
             <p>Initializing 3D brain interface</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Social Station Modal -->
+  <div class="social-station-modal" id="socialStationModal">
+    <div class="social-station-container">
+      <!-- Header -->
+      <div class="social-station-header">
+        <div class="station-title">
+          <i class="fas fa-share-alt"></i>
+          Social Station
+        </div>
+        <div class="station-controls">
+          <button class="station-control-btn" id="newPostBtn">
+            <i class="fas fa-plus"></i> New Post
+          </button>
+          <button class="station-control-btn" id="scheduledPostsBtn">
+            <i class="fas fa-calendar"></i> Scheduled
+          </button>
+          <button class="station-control-btn" id="analyticsBtn">
+            <i class="fas fa-chart-line"></i> Analytics
+          </button>
+          <button class="close-station-btn" id="closeStationBtn">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Body -->
+      <div class="social-station-body">
+        <!-- Left Panel - Post Creation -->
+        <div class="station-left-panel">
+          <div class="post-composer">
+            <div class="composer-header">
+              <h3><i class="fas fa-edit"></i> Create Post</h3>
+              <div class="connected-accounts">
+                <div class="account-icon twitter connected" title="Twitter Connected">
+                  <i class="fab fa-twitter"></i>
+                </div>
+                <div class="account-icon linkedin connected" title="LinkedIn Connected">
+                  <i class="fab fa-linkedin"></i>
+                </div>
+                <div class="account-icon instagram disconnected" title="Instagram Not Connected">
+                  <i class="fab fa-instagram"></i>
+                </div>
+                <div class="account-icon facebook disconnected" title="Facebook Not Connected">
+                  <i class="fab fa-facebook"></i>
+                </div>
+              </div>
+            </div>
+
+            <div class="composer-content">
+              <textarea id="postContent" class="post-textarea" placeholder="What's on your mind?"></textarea>
+
+              <div class="media-upload-area">
+                <div class="upload-zone" id="mediaUploadZone">
+                  <i class="fas fa-cloud-upload-alt"></i>
+                  <p>Drag & drop media here or click to upload</p>
+                  <input type="file" id="mediaInput" accept="image/*,video/*" multiple style="display: none;">
+                </div>
+                <div class="uploaded-media" id="uploadedMedia"></div>
+              </div>
+
+              <div class="composer-tools">
+                <div class="tool-section">
+                  <label>Platform Selection:</label>
+                  <div class="platform-toggles">
+                    <label class="platform-toggle">
+                      <input type="checkbox" id="twitterToggle" checked>
+                      <span class="toggle-display"></span>
+                      <i class="fab fa-twitter"></i> Twitter
+                    </label>
+                    <label class="platform-toggle">
+                      <input type="checkbox" id="linkedinToggle" checked>
+                      <span class="toggle-display"></span>
+                      <i class="fab fa-linkedin"></i> LinkedIn
+                    </label>
+                  </div>
+                </div>
+
+                <div class="tool-section">
+                  <label>AI Enhancement:</label>
+                  <div class="ai-tools">
+                    <button class="ai-tool-btn" id="optimizeBtn">
+                      <i class="fas fa-magic"></i> Optimize Content
+                    </button>
+                    <button class="ai-tool-btn" id="hashtagBtn">
+                      <i class="fas fa-hashtag"></i> Suggest Hashtags
+                    </button>
+                    <button class="ai-tool-btn" id="scheduleBtn">
+                      <i class="fas fa-clock"></i> Best Time
+                    </button>
+                    <button class="ai-tool-btn" id="analyzeBtn">
+                      <i class="fas fa-chart-line"></i> Analyze Content
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="composer-actions">
+                <button class="action-btn secondary" id="saveDraftBtn">
+                  <i class="fas fa-save"></i> Save Draft
+                </button>
+                <button class="action-btn secondary" id="schedulePostBtn">
+                  <i class="fas fa-calendar-plus"></i> Schedule
+                </button>
+                <button class="action-btn primary" id="publishNowBtn">
+                  <i class="fas fa-paper-plane"></i> Publish Now
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Center Panel - Calendar -->
+        <div class="station-center-panel">
+          <div class="schedule-calendar">
+            <div class="calendar-header">
+              <h3><i class="fas fa-calendar-alt"></i> Content Calendar</h3>
+              <div class="calendar-nav">
+                <button class="nav-btn" id="prevMonth">
+                  <i class="fas fa-chevron-left"></i>
+                </button>
+                <span class="current-month" id="currentMonth">December 2024</span>
+                <button class="nav-btn" id="nextMonth">
+                  <i class="fas fa-chevron-right"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="calendar-grid">
+              <div class="calendar-weekdays">
+                <div class="weekday">Sun</div>
+                <div class="weekday">Mon</div>
+                <div class="weekday">Tue</div>
+                <div class="weekday">Wed</div>
+                <div class="weekday">Thu</div>
+                <div class="weekday">Fri</div>
+                <div class="weekday">Sat</div>
+              </div>
+              <div class="calendar-days" id="calendarDays">
+                <!-- Calendar days will be generated by JavaScript -->
+              </div>
+            </div>
+
+            <div class="calendar-legend">
+              <div class="legend-item">
+                <div class="legend-color scheduled"></div>
+                <span>Scheduled</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-color published"></div>
+                <span>Published</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-color draft"></div>
+                <span>Draft</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Panel - Social Hub -->
+        <div class="station-right-panel">
+          <div class="social-hub">
+            <div class="hub-header">
+              <h3><i class="fas fa-chart-line"></i> Social Hub</h3>
+              <div class="view-toggle">
+                <button class="toggle-btn active" data-view="upcoming">Upcoming</button>
+                <button class="toggle-btn" data-view="published">Published</button>
+              </div>
+            </div>
+
+            <div class="hub-content">
+              <!-- Upcoming Posts View -->
+              <div class="hub-view active" id="upcomingView">
+                <div class="upcoming-posts">
+                  <div class="post-item">
+                    <div class="post-preview">
+                      <div class="post-platforms">
+                        <i class="fab fa-twitter"></i>
+                        <i class="fab fa-linkedin"></i>
+                      </div>
+                      <div class="post-text">Excited to share our latest project updates! 🚀</div>
+                      <div class="post-schedule">
+                        <i class="fas fa-clock"></i>
+                        <span>Today, 2:00 PM</span>
+                      </div>
+                    </div>
+                    <div class="post-actions">
+                      <button class="post-action-btn edit">
+                        <i class="fas fa-edit"></i>
+                      </button>
+                      <button class="post-action-btn delete">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="post-item">
+                    <div class="post-preview">
+                      <div class="post-platforms">
+                        <i class="fab fa-linkedin"></i>
+                      </div>
+                      <div class="post-text">Professional insights on AI development trends...</div>
+                      <div class="post-schedule">
+                        <i class="fas fa-clock"></i>
+                        <span>Tomorrow, 9:00 AM</span>
+                      </div>
+                    </div>
+                    <div class="post-actions">
+                      <button class="post-action-btn edit">
+                        <i class="fas fa-edit"></i>
+                      </button>
+                      <button class="post-action-btn delete">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Published Posts View -->
+              <div class="hub-view" id="publishedView">
+                <div class="published-posts">
+                  <div class="post-item published">
+                    <div class="post-preview">
+                      <div class="post-platforms">
+                        <i class="fab fa-twitter"></i>
+                      </div>
+                      <div class="post-text">Just launched our new feature! Check it out 🎉</div>
+                      <div class="post-stats">
+                        <span class="stat">
+                          <i class="fas fa-heart"></i> 24
+                        </span>
+                        <span class="stat">
+                          <i class="fas fa-retweet"></i> 8
+                        </span>
+                        <span class="stat">
+                          <i class="fas fa-comment"></i> 5
+                        </span>
+                      </div>
+                      <div class="post-time">
+                        <i class="fas fa-clock"></i>
+                        <span>2 hours ago</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="post-item published">
+                    <div class="post-preview">
+                      <div class="post-platforms">
+                        <i class="fab fa-linkedin"></i>
+                      </div>
+                      <div class="post-text">Sharing insights from our latest development cycle...</div>
+                      <div class="post-stats">
+                        <span class="stat">
+                          <i class="fas fa-thumbs-up"></i> 42
+                        </span>
+                        <span class="stat">
+                          <i class="fas fa-comment"></i> 12
+                        </span>
+                        <span class="stat">
+                          <i class="fas fa-share"></i> 6
+                        </span>
+                      </div>
+                      <div class="post-time">
+                        <i class="fas fa-clock"></i>
+                        <span>1 day ago</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="quick-stats">
+              <div class="stat-card">
+                <div class="stat-icon">
+                  <i class="fas fa-calendar-check"></i>
+                </div>
+                <div class="stat-info">
+                  <div class="stat-value">12</div>
+                  <div class="stat-label">Scheduled</div>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon">
+                  <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="stat-info">
+                  <div class="stat-value">2.4K</div>
+                  <div class="stat-label">Reach</div>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon">
+                  <i class="fas fa-heart"></i>
+                </div>
+                <div class="stat-info">
+                  <div class="stat-value">156</div>
+                  <div class="stat-label">Engagement</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -1018,6 +1328,9 @@
   <script src="conversation-interface.js"></script>
   <!-- Unified Memory Interface -->
   <script src="unified-interface.js"></script>
+
+  <!-- Socket.IO for Social Station WebSocket -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
 
   <!-- Three.js for 3D Brain -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>

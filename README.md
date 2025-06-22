@@ -1,4 +1,111 @@
-# Metatron - AI-Powered Creative Platform
+# Metatron Platform
+
+Unified AI platform with integrated Social Station for social media management.
+
+## Quick Start
+
+### Option 1: Auto Start (Recommended)
+```bash
+# Start both frontend and backend automatically
+start.bat
+```
+
+### Option 2: Manual Start
+```bash
+# Terminal 1: Start Main App Frontend (Port 9001)
+cd frontend
+python serve.py
+
+# Terminal 2: Start Social Station Backend Service (Port 8081)
+cd backend
+npm start
+```
+
+## How to Use Social Station
+
+1. **Start the platform** using `start.bat` or manual start
+2. **Open your main app** at http://localhost:9001
+3. **Click "Social Station"** button in the right navigation menu
+4. **Use the Social Station features** - all buttons now work with real backend!
+
+## Features
+
+### 🚀 Main Platform
+- AI Agent Flow Builder
+- Creative Studio
+- Memory Management
+- Video Meeting Integration
+- Model Training
+
+### 📱 Social Station (NEW!) - PraisonAI + Composio Powered
+- **🤖 AI Social Agent** - Chat interface for natural language commands
+- **🔗 Real Platform Connections** - Twitter, LinkedIn, Instagram, Facebook, TikTok
+- **📝 Intelligent Posting** - AI-optimized content creation and publishing
+- **📅 Smart Scheduling** - Optimal timing recommendations
+- **📊 Real Analytics** - Live engagement metrics and insights
+- **💬 Natural Language Interface** - "Schedule 3 posts about AI for next week"
+- **🔐 Secure OAuth** - Composio-powered platform authentication
+
+## Architecture
+
+```
+Metatron/
+├── frontend/           # Main UI (Port 9001)
+├── backend/           # Integrated backend services
+│   ├── social-station.js  # Social media backend (Port 8081)
+│   └── [other services]   # AI, memory, etc.
+├── start.bat          # Auto-startup script
+└── package.json       # Main dependencies
+```
+
+## Social Station Agent Setup
+
+### Prerequisites
+1. **Composio API Key** - Get from [Composio Dashboard](https://app.composio.dev)
+2. **Python 3.8+** - For PraisonAI agent
+3. **Node.js** - For frontend
+
+### Installation
+```bash
+# Install Python dependencies
+cd backend
+pip install -r requirements.txt
+
+# Set up environment
+cp .env.example .env
+# Edit .env and add your COMPOSIO_API_KEY
+
+# Install frontend dependencies (if needed)
+cd ../frontend
+# No additional dependencies required
+```
+
+### Social Station Agent API
+
+- **Chat Interface**: `POST /api/social-agent/chat`
+- **Publish Posts**: `POST /api/social-agent/publish`
+- **Schedule Posts**: `POST /api/social-agent/schedule`
+- **Save Drafts**: `POST /api/social-agent/draft`
+- **Analytics**: `GET /api/social-agent/analytics`
+- **Platform Management**: `GET/POST /api/social-agent/platforms`
+
+### Natural Language Commands
+- *"Post this to Twitter and LinkedIn: [content]"*
+- *"Schedule 3 posts about AI for next week"*
+- *"Connect my TikTok account"*
+- *"Show me my best performing posts"*
+- *"Create a content calendar for July"*
+
+## Development
+
+```bash
+# Install dependencies
+npm install
+cd backend && npm install
+
+# Development mode with auto-restart
+cd backend && npm run dev
+``` - AI-Powered Creative Platform
 
 A comprehensive AI-powered platform featuring chat interface, creative studio, video meeting capabilities, and advanced web application builder.
 

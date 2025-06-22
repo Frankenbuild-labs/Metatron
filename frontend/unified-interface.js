@@ -161,19 +161,24 @@ class UnifiedMemoryInterface {
     }
     
     enhanceChatWithUnified() {
-        // Find existing chat send functionality and enhance it
-        const originalSendMessage = window.sendMessage;
-        if (originalSendMessage) {
-            window.sendMessage = async () => {
-                const messageInput = document.getElementById('messageInput');
-                if (!messageInput || !messageInput.value.trim()) return;
-                
-                const message = messageInput.value.trim();
-                messageInput.value = '';
-                
-                // Use unified chat endpoint
-                await this.processUnifiedChat(message);
-            };
+        // DISABLED: Do not override the main sendMessage function
+        // This was causing the main chat to use unified interface instead of orchestrator
+        // Only enhance if there's a dedicated unified chat container
+        const unifiedChatContainer = document.getElementById('unifiedChatMessages');
+        if (unifiedChatContainer) {
+            const originalSendMessage = window.sendMessage;
+            if (originalSendMessage) {
+                window.sendMessage = async () => {
+                    const messageInput = document.getElementById('messageInput');
+                    if (!messageInput || !messageInput.value.trim()) return;
+
+                    const message = messageInput.value.trim();
+                    messageInput.value = '';
+
+                    // Use unified chat endpoint
+                    await this.processUnifiedChat(message);
+                };
+            }
         }
     }
     
